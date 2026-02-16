@@ -1,0 +1,52 @@
+# macOS & Editor metadata
+.DS_Store
+GEMINI.md
+.venv/
+ubuntu/
+*.zip
+
+# Local untracked course archive (worked labs are tracked in os-systems/)
+csse332-labs-archive-main/
+
+# Build artifacts & debug symbols
+*.o
+*.bin
+*.out
+*.dSYM/
+testout.txt
+
+# Xcode user data
+xcuserdata/
+
+# Compiled binaries
+embedded-c/**/myapp
+embedded-c/**/test_runner
+embedded-c/ble_tracker/Problem1 - BLE Payload Bit Extraction
+embedded-c/ble_tracker/Problem2 - The Interrupt-Safe Ring Buffer
+embedded-c/ble_tracker/Problem 3 - The Anti-Stalking Debouncer
+embedded-c/ble_tracker/Problem 4 - The Secure Broadcast Coordinator
+embedded-c/bit_manipulation/bit_basics
+embedded-c/bit_manipulation/bit_level2
+embedded-c/bit_manipulation/registers
+embedded-c/ring_buffers/ringbuffer
+embedded-c/ring_buffers/ring_buffer
+embedded-c/ring_buffers/movingaverage
+embedded-c/parsers_drivers/tlv_parser
+embedded-c/parsers_drivers/serialize
+embedded-c/parsers_drivers/camera_isp
+embedded-c/pointers_algorithms/double_pointer
+embedded-c/pointers_algorithms/remove_char
+embedded-c/pointers_algorithms/binarysearch
+embedded-c/pointers_algorithms/Hello
+embedded-c/concurrency/basicMutex1
+embedded-c/concurrency/basicMutex2
+embedded-c/concurrency/conditionalvariables/inorder
+embedded-c/concurrency/conditionalvariables/max
+embedded-c/concurrency/conditionalvariables/prodcons_condvar
+embedded-c/concurrency/conditionalvariables/rooms
+embedded-c/concurrency/conditionalvariables/tunnel
+os-systems/simpleshell/simpleshell
+os-systems/simpleshell/donothing
+
+# Compiled LeetCode binaries
+leetcode/*/solution
