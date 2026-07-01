@@ -90,51 +90,67 @@ static void freeList(struct ListNode *head)
 
 struct ListNode *addTwoNumbers(struct ListNode *l1, struct ListNode *l2)
 {
-    int sum = 0;
-    int carry = 0;
-
-    if(l1 == NULL || l2 == NULL)
+    if((l1 == NULL) || (l2 == NULL))
     {
         return NULL;
     }
 
-    struct ListNode *head = NULL;
-    struct ListNode *result = NULL;
+    int carry = 0;
+
+    struct ListNode *out = (struct ListNode *)malloc(sizeof(struct ListNode));
+    struct ListNode *head = out;
+    out->val = 0;
+    out->next = NULL;
     int count = 0;
 
-    while(l1 != NULL || l2 != NULL || carry == 1)
+    while((l1 != NULL) || (l2 != NULL))
     {
-        struct ListNode *newNode = (struct ListNode *)malloc(sizeof(struct ListNode));
-        if(result)
+        int num1 = 0;
+        int num2 = 0;
+
+        if(l1)
         {
-            result->next = newNode;
+            num1 = l1->val;
         }
-        count++;
 
-        int l1val = l1 != NULL ? l1->val : 0;
-        int l2val = l2 != NULL ? l2->val : 0;
+        if(l2)
+        {
+            num2 = l2->val;
+        }
 
-        sum = l1val + l2val + carry;
+        int sum = num1 + num2 + carry;
         carry = (sum > 9) ? 1 : 0;
         sum = sum % 10;
-        newNode->val = sum;
-        newNode->next = NULL;
+
+        if(count == 0)
+        {
+            out->val = sum;
+            count++;
+        }
+        else
+        {
+            struct ListNode *temp = (struct ListNode *)malloc(sizeof(struct ListNode));
+            temp->val = sum;
+            temp->next = NULL;
+            out->next = temp;
+            out = out->next;
+        }
 
         if(l1)
         {
             l1 = l1->next;
         }
-
         if(l2)
         {
             l2 = l2->next;
         }
+    }
 
-        result = newNode;
-        if(count == 1)
-        {
-            head = result;
-        }
+    if(carry)
+    {
+        out->next = (struct ListNode *)malloc(sizeof(struct ListNode));
+        out->next->val = 1;
+        out->next->next = NULL;
     }
 
     return head;
