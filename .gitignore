@@ -74,6 +74,8 @@ embedded-c/concurrency/conditionalvariables/tunnel
 # Compiled OS Systems binaries
 os-systems/simpleshell/simpleshell
 os-systems/simpleshell/donothing
+os-systems/process_lab/simple_test
+os-systems/process_lab/process_test_runner
 
 # Compiled LeetCode binaries
 leetcode/*/solution

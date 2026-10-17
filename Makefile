@@ -18,6 +18,7 @@ MODULES = \
 	embedded-c/pointers_algorithms \
 	embedded-c/ring_buffers \
 	os-systems/simpleshell \
+	os-systems/process_lab \
 	leetcode
 
 .PHONY: all test clean format $(MODULES)

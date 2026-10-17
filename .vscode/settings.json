@@ -10,5 +10,6 @@
   "editor.insertSpaces": true,
   "C_Cpp.formatting": "clangFormat",
   "C_Cpp.clang_format_style": "file",
-  "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: LLVM, BreakBeforeBraces: Allman, SpaceBeforeParens: Never, SpacesInParentheses: false, IndentWidth: 2, InsertBraces: true }"
+  "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: LLVM, BreakBeforeBraces: Allman, SpaceBeforeParens: Never, SpacesInParentheses: false, IndentWidth: 2, InsertBraces: true }",
+  "workbench.panel.defaultLocation": "right"
 }

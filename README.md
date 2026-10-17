@@ -43,6 +43,7 @@ Every module subfolder contains its own standalone [`Makefile`](./Makefile) and 
 | **Pointers & Algorithms** | Double-pointers, singly linked list, in-place string strip | `make -C embedded-c/pointers_algorithms test` | `make -C embedded-c/pointers_algorithms run FILE=singly_linked_list` | [`embedded-c/pointers_algorithms/README.md`](./embedded-c/pointers_algorithms/README.md) |
 | **Ring Buffers & DSP** | Power-of-two circular queue, moving average filter | `make -C embedded-c/ring_buffers test` | `make -C embedded-c/ring_buffers run FILE=power_of_two_ring_buffer` | [`embedded-c/ring_buffers/README.md`](./embedded-c/ring_buffers/README.md) |
 | **Operating Systems Shell** | Foreground/background jobs, double-fork watcher | `make -C os-systems/simpleshell test` | `make -C os-systems/simpleshell run` | [`os-systems/simpleshell/README.md`](./os-systems/simpleshell/README.md) |
+| **Process Lab** | Multi-process unit testing harness, fault isolation | `make -C os-systems/process_lab test` | `make -C os-systems/process_lab run` | [`os-systems/process_lab/README.md`](./os-systems/process_lab/README.md) |
 | **LeetCode C Solutions** | 26 solved problems with standalone test runners | `make -C leetcode test` | `make -C leetcode run ID=0001` *(or `make -C leetcode 0001-two-sum`)* | [`leetcode/README.md`](./leetcode/README.md) |
 
 ---
@@ -62,7 +63,8 @@ sourcecode/
 │   ├── endian_practice/       # 16/32/64-bit endianness swap & detection library + unit tests
 │   └── atoi_itoa_practice/    # Custom my_atoi / my_itoa implementation + unit tests
 ├── os-systems/                # Operating Systems & systems programming labs (university self-study)
-│   └── simpleshell/           # UNIX shell with foreground/background job execution & process control
+│   ├── simpleshell/           # UNIX shell with foreground/background job execution & process control
+│   └── process_lab/           # Multi-process unit test harness with fault isolation & timeouts
 ├── swift-ios/                 # Swift & iOS UIKit projects
 │   ├── SwiftPractice/         # Swift OOP & class inheritance exercises
 │   └── SwiftUiKitPractice/    # iOS UIKit & Storyboard practice
