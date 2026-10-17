@@ -1,0 +1,27 @@
+#!/bin/sh
+# Git commit-msg hook for /Users/sanketdave/sourcecode
+# Enforces:
+# 1. Zero company-specific, proprietary, or token leaks in commit messages
+# 2. Recommended subject length limit (72 characters)
+
+COMMIT_MSG_FILE="$1"
+FIRST_LINE=$(head -n 1 "$COMMIT_MSG_FILE")
+
+# 1. Privacy & Company-Specific Pattern Check (Base64-encoded to avoid literal keywords in hook)
+# Encoded regex: FindMy|Find My|AirTag|Tesla|visionOS|AVAudioSession|eyJhbGci
+FORBIDDEN_PATTERN=$(echo "RmluZE15fEZpbmQgTXl8QWlyVGFnfFRlc2xhfHZpc2lvbk9TfEFWQXVkaW9TZXNzaW9ufGV5SmhiR2Np" | base64 --decode)
+
+if grep -E -i -q "$FORBIDDEN_PATTERN" "$COMMIT_MSG_FILE"; then
+    echo "[commit-msg ERROR] Forbidden company-specific string or token detected in commit message:"
+    grep -E -i -n "$FORBIDDEN_PATTERN" "$COMMIT_MSG_FILE"
+    exit 1
+fi
+
+# 2. Subject Line Length Warning (> 72 characters)
+FIRST_LINE_LEN=${#FIRST_LINE}
+if [ "$FIRST_LINE_LEN" -gt 72 ]; then
+    echo "[commit-msg WARNING] Commit subject line is $FIRST_LINE_LEN characters (recommended <= 72 characters):"
+    echo "  \"$FIRST_LINE\""
+fi
+
+exit 0

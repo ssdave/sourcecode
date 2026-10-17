@@ -8,7 +8,7 @@
       "\t$0",
       "}"
     ],
-    "description": "if(condition) with auto-added parentheses, Allman braces, and indented body"
+    "description": "if(condition) with Allman braces and indented body"
   },
   "if-else condition (Allman, no space)": {
     "scope": "c,cpp",
@@ -68,5 +68,66 @@
       "}"
     ],
     "description": "while(condition) loop with Allman braces and indented body"
+  },
+  "do-while loop (Allman, no space)": {
+    "scope": "c,cpp",
+    "prefix": "do",
+    "body": [
+      "do",
+      "{",
+      "\t$0",
+      "} while($1);"
+    ],
+    "description": "do-while loop with Allman braces and indented body"
+  },
+  "switch statement (Allman, no space)": {
+    "scope": "c,cpp",
+    "prefix": "switch",
+    "body": [
+      "switch($1)",
+      "{",
+      "\tcase $2:",
+      "\t\t$3",
+      "\t\tbreak;",
+      "\tdefault:",
+      "\t\t$0",
+      "\t\tbreak;",
+      "}"
+    ],
+    "description": "switch statement with Allman braces and indented body"
+  },
+  "function definition (Allman)": {
+    "scope": "c,cpp",
+    "prefix": "func",
+    "body": [
+      "${1:void} ${2:function_name}($3)",
+      "{",
+      "\t$0",
+      "}"
+    ],
+    "description": "C function definition with Allman braces and indented body"
+  },
+  "struct definition (Allman)": {
+    "scope": "c,cpp",
+    "prefix": "struct",
+    "body": [
+      "typedef struct ${1:struct_name}",
+      "{",
+      "\t$0",
+      "} ${1:struct_name};"
+    ],
+    "description": "typedef struct definition with Allman braces"
+  },
+  "main function (Allman)": {
+    "scope": "c,cpp",
+    "prefix": "main",
+    "body": [
+      "int main(int argc, char *argv[])",
+      "{",
+      "\t$0",
+      "\treturn 0;",
+      "}"
+    ],
+    "description": "standard main function with Allman braces"
   }
 }

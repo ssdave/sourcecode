@@ -1,0 +1,22 @@
+# <type>(<scope>): <subject (max 72 chars, imperative mood, no ending period)>
+# Examples:
+#   Implement power-of-two circular buffer with bitmask indexing
+#   Solve LeetCode 83. Remove Duplicates from Sorted List (C)
+#   Add fine-grained mutex channel synchronization exercise
+#   Refactor embedded-c filenames to professional snake_case naming
+
+# Why is this change necessary? What problem does it solve?
+# Describe what was built or changed and key technical decisions.
+
+# Test Verification:
+# - Ran `make test` from root (all assertions and test harnesses passed)
+# - Verified single-file execution: `make -C <module> run FILE=<name>`
+# - Verified strict Allman brace style and clang-format conformance
+
+# Academic Attribution & Provenance (if applicable):
+# - Derived from: [Course / University / Textbook, e.g., CSSE 332 Operating Systems]
+# - Used for independent self-study, learning, and systems practice.
+
+# Privacy & Security Guardrails:
+# - ZERO company-specific names, internal hardware names, or private references.
+# - ZERO credentials, tokens, or hardcoded personal local paths.

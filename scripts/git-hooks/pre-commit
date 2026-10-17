@@ -1,0 +1,55 @@
+#!/bin/sh
+# Automatic Git pre-commit guard for /Users/sanketdave/sourcecode
+# Enforces:
+# 1. Zero company-specific or private/token leaks in staged files
+# 2. Automatic .clang-format styling (Allman braces + if(x)) on staged C/H files
+
+set -e
+
+STAGED_FILES=$(git diff --cached --name-only --diff-filter=ACM)
+
+if [ -z "$STAGED_FILES" ]; then
+    exit 0
+fi
+
+# 1. Privacy & Company-Specific Keyword Check (Base64-encoded to avoid literal keywords in hook)
+# Encoded regex: FindMy|Find My|AirTag|Tesla|visionOS|AVAudioSession|eyJhbGci
+FORBIDDEN_PATTERN=$(echo "RmluZE15fEZpbmQgTXl8QWlyVGFnfFRlc2xhfHZpc2lvbk9TfEFWQXVkaW9TZXNzaW9ufGV5SmhiR2Np" | base64 --decode)
+
+for FILE in $STAGED_FILES; do
+    case "$FILE" in
+        scripts/git-hooks/*)
+            continue
+            ;;
+    esac
+    if [ -f "$FILE" ]; then
+        if grep -E -i -n "$FORBIDDEN_PATTERN" "$FILE" >/dev/null 2>&1; then
+            echo "[pre-commit ERROR] Forbidden company-specific or token string detected in $FILE:"
+            grep -E -i -n "$FORBIDDEN_PATTERN" "$FILE"
+            exit 1
+        fi
+    fi
+done
+
+# 2. Auto-format staged .c and .h files using .clang-format
+CF_CMD=""
+if command -v clang-format >/dev/null 2>&1; then
+    CF_CMD="clang-format"
+elif command -v xcrun >/dev/null 2>&1 && xcrun -find clang-format >/dev/null 2>&1; then
+    CF_CMD="xcrun clang-format"
+fi
+
+if [ -n "$CF_CMD" ]; then
+    for FILE in $STAGED_FILES; do
+        case "$FILE" in
+            *.c|*.h)
+                if [ -f "$FILE" ]; then
+                    $CF_CMD -i -style=file "$FILE"
+                    git add "$FILE"
+                fi
+                ;;
+        esac
+    done
+fi
+
+exit 0
