@@ -1,0 +1,7 @@
+BasedOnStyle: LLVM
+BreakBeforeBraces: Allman
+SpaceBeforeParens: Never
+SpacesInParentheses: false
+IndentWidth: 2
+InsertBraces: true
+ColumnLimit: 100

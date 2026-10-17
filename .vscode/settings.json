@@ -1,0 +1,14 @@
+{
+  "editor.suggest.showSnippets": true,
+  "editor.snippetSuggestions": "top",
+  "editor.tabCompletion": "on",
+  "editor.autoClosingBrackets": "always",
+  "editor.autoIndent": "full",
+  "editor.formatOnSave": true,
+  "editor.formatOnType": true,
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "C_Cpp.formatting": "clangFormat",
+  "C_Cpp.clang_format_style": "file",
+  "C_Cpp.clang_format_fallbackStyle": "{ BasedOnStyle: LLVM, BreakBeforeBraces: Allman, SpaceBeforeParens: Never, SpacesInParentheses: false, IndentWidth: 2, InsertBraces: true }"
+}

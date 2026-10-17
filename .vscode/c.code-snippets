@@ -1,0 +1,72 @@
+{
+  "if condition (Allman, no space)": {
+    "scope": "c,cpp",
+    "prefix": "if",
+    "body": [
+      "if($1)",
+      "{",
+      "\t$0",
+      "}"
+    ],
+    "description": "if(condition) with auto-added parentheses, Allman braces, and indented body"
+  },
+  "if-else condition (Allman, no space)": {
+    "scope": "c,cpp",
+    "prefix": "ifelse",
+    "body": [
+      "if($1)",
+      "{",
+      "\t$2",
+      "}",
+      "else",
+      "{",
+      "\t$0",
+      "}"
+    ],
+    "description": "if-else block with Allman braces and indented body"
+  },
+  "else if condition (Allman, no space)": {
+    "scope": "c,cpp",
+    "prefix": ["elif", "elseif", "else if"],
+    "body": [
+      "else if($1)",
+      "{",
+      "\t$0",
+      "}"
+    ],
+    "description": "else if(condition) with Allman braces and indented body"
+  },
+  "else block (Allman)": {
+    "scope": "c,cpp",
+    "prefix": "else",
+    "body": [
+      "else",
+      "{",
+      "\t$0",
+      "}"
+    ],
+    "description": "else block with Allman braces and indented body"
+  },
+  "for loop (Allman, no space)": {
+    "scope": "c,cpp",
+    "prefix": "for",
+    "body": [
+      "for(int ${1:i} = 0; ${1:i} < ${2:count}; ${1:i}++)",
+      "{",
+      "\t$0",
+      "}"
+    ],
+    "description": "for loop with Allman braces and indented body"
+  },
+  "while loop (Allman, no space)": {
+    "scope": "c,cpp",
+    "prefix": "while",
+    "body": [
+      "while($1)",
+      "{",
+      "\t$0",
+      "}"
+    ],
+    "description": "while(condition) loop with Allman braces and indented body"
+  }
+}
