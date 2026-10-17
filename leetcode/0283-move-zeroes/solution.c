@@ -13,63 +13,63 @@
  *   - Example 2: nums = [0]              -> [0]
  * ============================================================================ */
 
-#include <stdio.h>
 #include <assert.h>
+#include <stdio.h>
 
 void moveZeroes(int *nums, int numsSize)
 {
-    if((nums == NULL) || (numsSize == 0) || (numsSize == 1))
-    {
-        return;
-    }
+  if((nums == NULL) || (numsSize == 0) || (numsSize == 1))
+  {
+    return;
+  }
 
-    for(int i = 0; i < numsSize - 1; i++)
+  for(int i = 0; i < numsSize - 1; i++)
+  {
+    int *ptr1 = &nums[i];
+    int *ptr2 = &nums[i + 1];
+    if(*ptr1 == 0)
     {
-        int *ptr1 = &nums[i];
-        int *ptr2 = &nums[i + 1];
-        if(*ptr1 == 0)
+      while(*ptr2 == 0)
+      {
+        if(ptr2 == &nums[numsSize - 1])
         {
-            while(*ptr2 == 0)
-            {
-                if(ptr2 == &nums[numsSize - 1])
-                {
-                    break;
-                }
-                ptr2++;
-            }
-            if(*ptr2 == 0)
-            {
-                break;
-            }
-            else
-            {
-                int tmp = *ptr1;
-                *ptr1 = *ptr2;
-                *ptr2 = tmp;
-            }
+          break;
         }
+        ptr2++;
+      }
+      if(*ptr2 == 0)
+      {
+        break;
+      }
+      else
+      {
+        int tmp = *ptr1;
+        *ptr1 = *ptr2;
+        *ptr2 = tmp;
+      }
     }
+  }
 }
 
 int main(void)
 {
-    printf("=== LeetCode #283: Move Zeroes ===\n");
+  printf("=== LeetCode #283: Move Zeroes ===\n");
 
-    int nums1[] = {0, 1, 0, 3, 12};
-    int exp1[] = {1, 3, 12, 0, 0};
-    moveZeroes(nums1, 5);
-    printf("Example 1: [0,1,0,3,12] -> [%d, %d, %d, %d, %d]\n",
-           nums1[0], nums1[1], nums1[2], nums1[3], nums1[4]);
-    for(int i = 0; i < 5; i++)
-    {
-        assert(nums1[i] == exp1[i]);
-    }
+  int nums1[] = {0, 1, 0, 3, 12};
+  int exp1[] = {1, 3, 12, 0, 0};
+  moveZeroes(nums1, 5);
+  printf("Example 1: [0,1,0,3,12] -> [%d, %d, %d, %d, %d]\n", nums1[0], nums1[1], nums1[2],
+         nums1[3], nums1[4]);
+  for(int i = 0; i < 5; i++)
+  {
+    assert(nums1[i] == exp1[i]);
+  }
 
-    int nums2[] = {0};
-    moveZeroes(nums2, 1);
-    printf("Example 2: [0]          -> [%d]\n", nums2[0]);
-    assert(nums2[0] == 0);
+  int nums2[] = {0};
+  moveZeroes(nums2, 1);
+  printf("Example 2: [0]          -> [%d]\n", nums2[0]);
+  assert(nums2[0] == 0);
 
-    printf("All tests passed!\n");
-    return 0;
+  printf("All tests passed!\n");
+  return 0;
 }

@@ -13,69 +13,69 @@
  *   - Example 2: haystack = "leetcode",  needle = "leeto" -> -1
  * ============================================================================ */
 
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
-#include <assert.h>
 
 int strStr(char *haystack, char *needle)
 {
-    int index = 0, count1 = 0, count2 = 0;
-    int len1 = (int)strlen(haystack);
-    int len2 = (int)strlen(needle);
+  int index = 0, count1 = 0, count2 = 0;
+  int len1 = (int)strlen(haystack);
+  int len2 = (int)strlen(needle);
 
-    if(len1 < len2)
-    {
-        return -1;
-    }
-    else if((len1 == 0) && (len2 == 0))
-    {
-        return 0;
-    }
-    else if(len2 == 0)
-    {
-        return 0;
-    }
-
-    while(count1 < len1)
-    {
-        if(haystack[count1] == needle[count2])
-        {
-            index = count1;
-            int flag = 0;
-            for(int i = count1; i < count1 + len2; i++, count2++)
-            {
-                if(haystack[i] != needle[count2])
-                {
-                    flag = 1;
-                    break;
-                }
-            }
-            if(!flag)
-            {
-                return index;
-            }
-            else
-            {
-                count2 = 0;
-            }
-        }
-        count1++;
-    }
+  if(len1 < len2)
+  {
     return -1;
+  }
+  else if((len1 == 0) && (len2 == 0))
+  {
+    return 0;
+  }
+  else if(len2 == 0)
+  {
+    return 0;
+  }
+
+  while(count1 < len1)
+  {
+    if(haystack[count1] == needle[count2])
+    {
+      index = count1;
+      int flag = 0;
+      for(int i = count1; i < count1 + len2; i++, count2++)
+      {
+        if(haystack[i] != needle[count2])
+        {
+          flag = 1;
+          break;
+        }
+      }
+      if(!flag)
+      {
+        return index;
+      }
+      else
+      {
+        count2 = 0;
+      }
+    }
+    count1++;
+  }
+  return -1;
 }
 
 int main(void)
 {
-    printf("=== LeetCode #28: Find the Index of the First Occurrence in a String ===\n");
+  printf("=== LeetCode #28: Find the Index of the First Occurrence in a String ===\n");
 
-    int r1 = strStr("sadbutsad", "sad");
-    printf("Example 1: haystack=\"sadbutsad\", needle=\"sad\"   -> %d\n", r1);
-    assert(r1 == 0);
+  int r1 = strStr("sadbutsad", "sad");
+  printf("Example 1: haystack=\"sadbutsad\", needle=\"sad\"   -> %d\n", r1);
+  assert(r1 == 0);
 
-    int r2 = strStr("leetcode", "leeto");
-    printf("Example 2: haystack=\"leetcode\",  needle=\"leeto\" -> %d\n", r2);
-    assert(r2 == -1);
+  int r2 = strStr("leetcode", "leeto");
+  printf("Example 2: haystack=\"leetcode\",  needle=\"leeto\" -> %d\n", r2);
+  assert(r2 == -1);
 
-    printf("All tests passed!\n");
-    return 0;
+  printf("All tests passed!\n");
+  return 0;
 }

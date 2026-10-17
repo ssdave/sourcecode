@@ -1,5 +1,5 @@
 /* ============================================================================
- * Problem 1: BLE Payload Bit Extraction
+ * File: ble_payload_parser.c
  *
  * The Scenario:
  *   BLE proximity tracker accessories broadcast their location via tiny BLE
@@ -33,11 +33,12 @@ struct BleTrackerPayload
   uint16_t checksum;
 };
 
-// Write this function:
 void parse_ble_payload(const uint8_t *raw_data, struct BleTrackerPayload *parsed_data)
 {
   if((raw_data == NULL) || (parsed_data == NULL))
+  {
     return;
+  }
 
   // Bytes 0..27: Copy the 224-bit (28-byte) P-224 elliptic curve public key
   for(int i = 0; i < 28; i++)
@@ -54,7 +55,7 @@ void parse_ble_payload(const uint8_t *raw_data, struct BleTrackerPayload *parsed
   parsed_data->checksum = (raw_data[29] | (raw_data[30] << 8));
 }
 
-// 3. The Test Harness (Verification)
+// Test Harness (Verification)
 int main()
 {
   // Step A: Create our mock 31-byte raw payload initialized to 0
@@ -85,21 +86,33 @@ int main()
 
   printf("Expected State: 2\t | Parsed State: %d \t ", parsed.device_state);
   if(parsed.device_state == 2)
+  {
     printf("[PASS]\n");
+  }
   else
+  {
     printf("[FAIL]\n");
+  }
 
   printf("Expected Battery: 50\t | Parsed Battery: %d \t ", parsed.battery_level);
   if(parsed.battery_level == 50)
+  {
     printf("[PASS]\n");
+  }
   else
+  {
     printf("[FAIL]\n");
+  }
 
   printf("Expected Checksum: ABCD | Parsed Checksum: %04X \t ", parsed.checksum);
   if(parsed.checksum == 0xABCD)
+  {
     printf("[PASS]\n");
+  }
   else
+  {
     printf("[FAIL]\n");
+  }
 
   return 0;
 }

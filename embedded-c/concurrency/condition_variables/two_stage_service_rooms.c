@@ -1,5 +1,5 @@
 /* ============================================================================
- * File: rooms.c
+ * File: two_stage_service_rooms.c
  *
  * Attribution & Copyright:
  *   Originates from Rose-Hulman Institute of Technology — CSSE 332: Operating Systems
@@ -80,8 +80,7 @@ void *customer(void *arg)
   pthread_mutex_unlock(&firstlock);
   printf("[Customer %ld] Left first room...\n", tid);
 
-  // You might want to check if you need to enter the waiting room here or leave
-  // here...
+  // Stage 2: Attempt entry into second room or waiting room
   pthread_mutex_lock(&secondlock);
   if((num_customer_wait_secondroom == 2) && (num_customer_secondroom == 2))
   {
@@ -94,10 +93,11 @@ void *customer(void *arg)
   if(num_customer_secondroom == 2)
   {
     num_customer_wait_secondroom++;
+    // Note: num_customer_wait_secondroom--; is placed inside the while loop; on
+    // spurious wakeup, it decrements the waiting counter multiple times. It should
+    // be decremented once after exiting the while loop.
     while(num_customer_secondroom == 2)
     {
-      // In case the customer wants to enter the waiting room, you might want to
-      // print the following:
       printf("[Customer %ld] Joined the waiting room for second room...\n", tid);
       pthread_cond_wait(&secondroom, &secondlock);
       num_customer_wait_secondroom--;
@@ -132,7 +132,9 @@ int main(int argc, char **argv)
     tids[i] = i + 1;
     pthread_create(&threads[i], 0, customer, (void *)tids[i]);
     if(!(i % 2))
+    {
       sleep(rand() % 2);
+    }
   }
 
   for(i = 0; i < NUM_PEOPLE_ARRIVING; i++)

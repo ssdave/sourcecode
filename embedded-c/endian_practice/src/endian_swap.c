@@ -58,7 +58,9 @@ bool is_system_little_endian(void)
   uint32_t var = 0x12345678;
   uint8_t *p = (uint8_t *)&var;
   if(p[0] == 0x78)
+  {
     return true;
+  }
 
   return false;
 }
@@ -67,7 +69,9 @@ void swap_endian_buffer_32(uint32_t *buf, size_t count)
 {
   // Swap each 32-bit element in-place after validating buffer pointer and length
   if((buf == NULL) || (count == 0))
+  {
     return;
+  }
 
   for(size_t iter = 0; iter < count; iter++)
   {

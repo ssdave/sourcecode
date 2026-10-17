@@ -1,5 +1,5 @@
 /* ============================================================================
- * File: basicMutex1.c
+ * File: mutex_shared_counter.c
  *
  * Attribution & Copyright:
  *   Originates from Rose-Hulman Institute of Technology — CSSE 332: Operating Systems
@@ -13,12 +13,12 @@
  *
  * What is being built:
  *   Thread-safe shared counter accumulation using a POSIX mutex (pthread_mutex_t)
- *   to eliminate read-modify-write data races on a global integer (`total`).
+ *   to eliminate read-modify-write data races on a global integer (`counter_total`).
  *
  * What is being tested:
- *   Spawns NUM_THREADS (10) concurrent threads, each incrementing `total` 10,000
- *   times inside a mutex-protected critical section, and verifies that the final
- *   accumulated total is deterministically 100,000 with zero lost updates.
+ *   Spawns NUM_THREADS (10) concurrent threads, each incrementing `counter_total`
+ *   10,000 times inside a mutex-protected critical section, and verifies that the
+ *   final accumulated total is deterministically 100,000 with zero lost updates.
  * ============================================================================ */
 
 #include <pthread.h>
@@ -27,22 +27,18 @@
 #include <unistd.h>
 
 #define NUM_THREADS 10
-/*
- * You can use the provided makefile to compile your code.
- */
-int total;
 
-pthread_mutex_t lock;
+int counter_total;
+pthread_mutex_t counter_mutex;
 
-void *add10000(void *arg)
+void *worker_increment_counter(void *arg)
 {
   for(int i = 0; i < 10000; i++)
   {
-    // this area: critical section
-    // want this to run in mutual exclusion mode
-    pthread_mutex_lock(&lock);
-    total++;
-    pthread_mutex_unlock(&lock);
+    // Mutual exclusion: lock protects read-modify-write on shared counter
+    pthread_mutex_lock(&counter_mutex);
+    counter_total++;
+    pthread_mutex_unlock(&counter_mutex);
   }
 
   return NULL;
@@ -50,14 +46,14 @@ void *add10000(void *arg)
 
 int main(int argc, char **argv)
 {
-  total = 0;
+  counter_total = 0;
   pthread_t threads[NUM_THREADS];
-  pthread_mutex_init(&lock, 0);
+  pthread_mutex_init(&counter_mutex, 0);
 
   int i;
   for(i = 0; i < NUM_THREADS; i++)
   {
-    pthread_create(&threads[i], NULL, add10000, NULL);
+    pthread_create(&threads[i], NULL, worker_increment_counter, NULL);
   }
 
   for(i = 0; i < NUM_THREADS; i++)
@@ -65,8 +61,16 @@ int main(int argc, char **argv)
     pthread_join(threads[i], NULL);
   }
 
-  printf("\nEverything finished.  Final total %d\n", total);
-  pthread_mutex_destroy(&lock);
+  printf("\nEverything finished. Final total %d\n", counter_total);
+  if(counter_total == 100000)
+  {
+    printf("[PASS] Final total is exactly 100,000\n");
+  }
+  else
+  {
+    printf("[FAIL] Expected 100,000, got %d\n", counter_total);
+  }
+  pthread_mutex_destroy(&counter_mutex);
 
   return 0;
 }

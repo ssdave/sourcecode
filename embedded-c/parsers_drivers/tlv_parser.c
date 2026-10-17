@@ -41,7 +41,9 @@ int parse_tlv_stream(const uint8_t *buf, size_t buf_len, tlv_record_t *records, 
   // Reject NULL pointers, empty buffers, or streams exceeding maximum record capacity
   if((buf == NULL) || (buf_len == 0) || (records == NULL) || (max_records == 0) ||
      (buf_len > sizeof(tlv_record_t) * max_records))
+  {
     return -1;
+  }
 
   size_t iter = 0;
   for(iter = 0; iter < max_records; iter++)

@@ -1,5 +1,5 @@
 /* ============================================================================
- * File: serialize.c
+ * File: uint32_serializer.c
  *
  * What is being built:
  *   Byte-level pointer serialization (`serialize`) and deserialization
@@ -20,6 +20,8 @@ void serialize(uint32_t *input, uint8_t *output)
 {
   // Cast uint32_t address to byte pointer to copy each byte sequentially in memory order
   uint8_t *ptr = (uint8_t *)input;
+  // Note: sizeof(input) evaluates to sizeof(uint32_t *) which is 8 bytes on 64-bit platforms,
+  // causing an out-of-bounds write past the 4-byte output buffer; should use sizeof(uint32_t) or 4.
   int size = sizeof(input);
   while(size > 0)
   {
@@ -33,6 +35,8 @@ void deserialize(uint8_t *input, uint32_t *output)
   // Reconstruct the 32-bit word by copying bytes back into the target uint32_t memory address
   uint8_t *ptr = (uint8_t *)input;
   uint8_t *out = (uint8_t *)output;
+  // Note: sizeof(output) evaluates to sizeof(uint32_t *) which is 8 bytes on 64-bit platforms;
+  // should use sizeof(uint32_t) or 4.
   int size = sizeof(output);
 
   while(size > 0)
@@ -57,8 +61,7 @@ int main()
 
   input = 0x00;
   deserialize(&output[0], &input);
-  printf("De-serialized data is: 0x%x", input);
-  printf("\n");
+  printf("De-serialized data is: 0x%x\n", input);
 
   return 0;
 }

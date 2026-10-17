@@ -20,14 +20,20 @@
 void remove_char(char *str, char target)
 {
   if(str == NULL)
+  {
     return;
+  }
 
   int len = strlen(str);
   if(len == 0)
+  {
     return;
+  }
 
   if((len == 1) && (target != *str))
+  {
     return;
+  }
 
   // Two-pointer in-place compaction: wr lags behind str whenever target is skipped
   char *wr = str;

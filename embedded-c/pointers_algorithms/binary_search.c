@@ -1,9 +1,11 @@
 /* ============================================================================
- * File: binarysearch.c (Practice Harness / Starter Template)
+ * File: binary_search.c (Practice Harness / Starter Template)
  *
- * Note:
- *   This file is a 15-case interview test harness kept as a starter template
- *   for timed practice (`binary_search` is currently a stub returning `-1`).
+ * Status:
+ *   Practice harness kept for timed self-practice: `binary_search` is still a
+ *   stub that returns `-1`, so most cases currently print [FAIL]. Because of
+ *   that it is built by `make` but is NOT part of `make test`
+ *   (run it with `make run FILE=binary_search`).
  *
  * What is being built:
  *   Iterative O(log n) time, O(1) space binary search (`binary_search`) over
@@ -11,25 +13,26 @@
  *   (`low + (high - low) / 2`).
  *
  * What is being tested:
- *   Comprehensive 15-case test suite covering:
+ *   Table of boundary cases covering:
  *     - Standard odd/even length arrays (first, middle, last, and missing elements).
- *     - Boundary cases (empty array, 1-element array, 2-element array).
- *     - Negative values, `INT_MIN` / `INT_MAX` extremes, and duplicate elements.
+ *     - Boundary cases (empty array, NULL pointer, negative size, 1-element array).
+ *     - `INT_MIN` / `INT_MAX` extremes, sparse/dense data, and duplicate elements.
+ *     - Sub-array pointer offsets (no reliance on hard-coded indices).
  * ============================================================================ */
 
 #include <limits.h>
 #include <stdio.h>
 
-// Candidate implements this function
+// Practice stub: returns the index of `target` in `arr[0..size-1]`, or -1.
 int binary_search(const int arr[], int size, int target)
 {
-  // TODO: Implement your solution here
-
+  (void)arr;
+  (void)size;
+  (void)target;
   return -1;
 }
 
-// --- INTERVIEWER TEST SUITE ---
-// Do not modify below this line
+// --- Test harness ---
 
 // Standard strict-equality test runner
 void run_test(const char *test_name, const int arr[], int size, int target, int expected)
@@ -116,7 +119,7 @@ int main()
   int arr_all_same[] = {0, 0, 0, 0, 0};
   run_test_duplicate("Array with identical elements", arr_all_same, 5, 0);
 
-  // 8. Offset/Pointer Arithmetic test (Tests if they rely on hardcoded indices)
+  // 8. Offset/Pointer Arithmetic test (implementation must not rely on hard-coded indices)
   int arr_large[] = {1, 2, 3, 4, 5, 6, 7, 8, 9, 10};
   run_test("Sub-array pointer offset", arr_large + 5, 5, 8, 2);
   // ^ Passes `arr` starting at value 6. Size is 5. Target 8 should be index 2 relative to the new

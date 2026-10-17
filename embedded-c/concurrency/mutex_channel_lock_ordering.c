@@ -1,5 +1,5 @@
 /* ============================================================================
- * File: basicMutex2.c
+ * File: mutex_channel_lock_ordering.c
  *
  * Attribution & Copyright:
  *   Originates from Rose-Hulman Institute of Technology — CSSE 332: Operating Systems
@@ -30,42 +30,13 @@
 #include <unistd.h>
 
 /*
-
-   In this hypothetical scenario, we have two output channels: the red channel
-   and the blue channel.  In this system, it's important that two
-   different threads never try to output to the same channel at the same
-   time (but one thread can write to red, at the same time a different
-   thread can write to blue).
-
-   There are 4 kinds of commands:
-   WhiteCommand - needs neither channel
-   RedCommand - needs to output to the red channel
-   BlueCommand - needs to output to the blue channel
-   PurpleCommand - needs to output to both channels
-
-   Each thread function consists of a series of commands.  Use
-   mutex locks to ensure that the rule about channels is never violated but
-   otherwise the threads execute in parallel as much as possible.
-
-   To make this work properly you'll edit the red/blue/purple commands
-   and main.  Don't edit the thread functions themselves (or you can,
-   but we should be able to test with our own different thread
-   functions and they should preserve the rules correctly regardless of
-   what order the commands occur within them).
-
-HINT: to see if your code works correctly, it's easiest to look at
-only 1 color appears at a time.  To do this, run your code and dump
-the output to file.  Then use grep to only show lines matching the
-color you care about.
-
-You can use the provided makefile to compile your code.
-
-./red_blue_purple > testout.txt
-grep Red testout.txt
-
-If your code is right you should see an alternating Start/End
-
-*/
+ * Multi-resource channel synchronization:
+ * - White commands: No channel resource needed.
+ * - Red commands: Exclusively acquires redLock.
+ * - Blue commands: Exclusively acquires blueLock.
+ * - Purple commands: Exclusively acquires both redLock and blueLock in strict
+ *   hierarchical order (blueLock -> redLock) to avoid deadlocks.
+ */
 
 // Separate mutexes allow Red-only and Blue-only commands to execute concurrently
 pthread_mutex_t redLock = PTHREAD_MUTEX_INITIALIZER;

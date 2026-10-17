@@ -1,5 +1,5 @@
 /* ============================================================================
- * File: registers.c
+ * File: register_union_overlay.c
  *
  * What is being built:
  *   Memory-mapped hardware register overlay using a C `union` (`register_access`)

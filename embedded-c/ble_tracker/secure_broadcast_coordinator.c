@@ -1,5 +1,5 @@
 /* ============================================================================
- * Problem 4: The Secure Broadcast Coordinator
+ * File: secure_broadcast_coordinator.c
  *
  * The Scenario:
  *   A BLE proximity tracking device has three concurrent actors:

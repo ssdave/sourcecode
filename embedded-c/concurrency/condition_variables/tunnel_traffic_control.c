@@ -1,9 +1,10 @@
 /* ============================================================================
- * File: tunnel.c (CSSE 332 Lab Starter Template)
+ * File: tunnel_traffic_control.c (CSSE 332 Lab Starter Template)
  *
  * Status:
  *   Unimplemented CSSE 332 lab starter template preserved for practice.
- *   (See `max.c` and `rooms.c` in this directory for completed solutions.)
+ *   (See `bounded_critical_section.c` and `two_stage_service_rooms.c` in this directory for
+ * completed solutions.)
  *
  * Attribution & Copyright:
  *   Originates from Rose-Hulman Institute of Technology — CSSE 332: Operating Systems

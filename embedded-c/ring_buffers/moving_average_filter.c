@@ -1,5 +1,5 @@
 /* ============================================================================
- * File: movingaverage.c
+ * File: moving_average_filter.c
  *
  * What is being built:
  *   O(1) sliding-window moving average filter (`WINDOW_SIZE = 4`) for sensor
@@ -49,7 +49,9 @@ void print_debug(MovingAverage *ma)
       printf("%.1f", ma->buffer[i]);
     }
     if(i < WINDOW_SIZE - 1)
+    {
       printf(", ");
+    }
   }
   printf("] | Head: %d | Sum: %.1f | Count: %d\n", ma->head, ma->sum, ma->count);
 }

@@ -1,5 +1,5 @@
 /* ============================================================================
- * File: bit_level2.c
+ * File: bitfield_operations.c
  *
  * What is being built:
  *   Intermediate 32-bit register bitfield and bit-counting routines:
@@ -31,11 +31,17 @@ uint8_t count_set_bits(uint32_t val)
   uint8_t numOfBits = 0;
   // Fast paths for 0 and exact powers of two (single bit set)
   if(val == 0)
+  {
     return 0;
+  }
   else if((val & (val - 1)) == 0)
+  {
     return 1;
+  }
   else if(val == 1)
+  {
     return 1;
+  }
   else
   {
     // Shift through all 32 bits, accumulating LSB matches
@@ -45,7 +51,9 @@ uint8_t count_set_bits(uint32_t val)
     while(count)
     {
       if(val & mask)
+      {
         numOfBits++;
+      }
       count--;
       val = val >> 1;
     }
@@ -62,7 +70,9 @@ uint8_t count_set_bits(uint32_t val)
 uint32_t extract_bitfield(uint32_t reg, uint8_t offset, uint8_t width)
 {
   if((offset > 31) || (width > 31) || ((offset + width) > 31))
+  {
     return reg;
+  }
 
   // Build a mask with 1s across bits [offset .. offset + width - 1]
   uint32_t mask = 0;
@@ -88,7 +98,9 @@ uint32_t extract_bitfield(uint32_t reg, uint8_t offset, uint8_t width)
 uint32_t insert_bitfield(uint32_t reg, uint8_t offset, uint8_t width, uint32_t val)
 {
   if((offset > 31) || (width > 31) || ((offset + width) > 31))
+  {
     return reg;
+  }
 
   // Step 1: Clear target bit range [offset .. offset + width - 1] in reg
   uint8_t start = offset;

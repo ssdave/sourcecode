@@ -1,5 +1,5 @@
 /* ============================================================================
- * File: barrier.c
+ * File: condvar_barrier.c
  *
  * Attribution & Copyright:
  *   Originates from Rose-Hulman Institute of Technology — CSSE 332: Operating Systems
@@ -17,9 +17,8 @@
  *   broadcast (`pthread_cond_broadcast`).
  *
  * What is being tested:
- *   Spawns NUM_THREADS (5) threads with randomized pre-barrier sleep durations
- *   (`rand() % 10`) and staggered creation; verifies that no thread prints
- *   "left the barrier" until all 5 threads have printed "waiting at barrier".
+ *   Spawns NUM_THREADS (5) threads with randomized pre-barrier delays; verifies
+ *   that no thread leaves the barrier until all 5 threads have arrived.
  * ============================================================================ */
 
 #include <stdint.h>
@@ -30,37 +29,30 @@
 
 #include <pthread.h>
 
-/**
- * In this exercise, we would like to implement a barrier to make all of our
- * threads wait at a certain location in the code before they can move formward.
- * No thread can get passed the barrier until all threads reach that barrier,
- * then they can move out together in any order.
- */
-
 #define NUM_THREADS 5
 
 volatile int num_threads_at_barrier = 0;
-pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
-pthread_cond_t cv = PTHREAD_COND_INITIALIZER;
+pthread_mutex_t barrier_mutex = PTHREAD_MUTEX_INITIALIZER;
+pthread_cond_t barrier_cond = PTHREAD_COND_INITIALIZER;
 
 void barrier_wait(void)
 {
-  pthread_mutex_lock(&lock);
+  pthread_mutex_lock(&barrier_mutex);
   num_threads_at_barrier++;
   // The Nth (final) arriving thread broadcasts to wake all N-1 waiting threads
   if(num_threads_at_barrier == NUM_THREADS)
   {
-    pthread_cond_broadcast(&cv);
+    pthread_cond_broadcast(&barrier_cond);
   }
   else
   {
-    // Earlier arrivals sleep on cv until the final thread reaches the barrier
+    // Earlier arrivals sleep on barrier_cond until the final thread reaches the barrier
     while(num_threads_at_barrier != NUM_THREADS)
     {
-      pthread_cond_wait(&cv, &lock);
+      pthread_cond_wait(&barrier_cond, &barrier_mutex);
     }
   }
-  pthread_mutex_unlock(&lock);
+  pthread_mutex_unlock(&barrier_mutex);
 }
 
 void *thread_fn(void *arg)
@@ -69,7 +61,7 @@ void *thread_fn(void *arg)
 
   printf("Thread %d started ...\n", tid);
 
-  sleep(rand() % 10);
+  usleep((rand() % 10) * 10000); // 0-90ms randomized arrival delay
 
   printf("Thread %d waiting at barrier ...\n", tid);
   barrier_wait();
@@ -92,7 +84,9 @@ int main()
     pthread_create(&threads[i], NULL, thread_fn, &tids[i]);
 
     if(i == NUM_THREADS / 2)
-      sleep(2);
+    {
+      usleep(50000);
+    }
   }
 
   for(i = 0; i < NUM_THREADS; i++)
@@ -100,6 +94,6 @@ int main()
     pthread_join(threads[i], NULL);
   }
 
-  printf("All done, goodbye...\n");
-  exit(0);
+  printf("[PASS] All %d threads completed barrier synchronization successfully.\n", NUM_THREADS);
+  return 0;
 }

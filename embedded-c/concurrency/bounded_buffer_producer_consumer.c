@@ -1,5 +1,5 @@
 /* ============================================================================
- * File: producerconsumer.c
+ * File: bounded_buffer_producer_consumer.c
  *
  * Attribution & Copyright:
  *   Originates from Rose-Hulman Institute of Technology — CSSE 332: Operating Systems
@@ -29,11 +29,6 @@
 
 #include <pthread.h>
 #include <semaphore.h>
-
-/**
- * The goal of this activity is to implement the correct concurrency management
- * for the producer/consumer problem using condition variables.
- */
 
 const int loops = 100;
 #define MAX 10
@@ -146,9 +141,13 @@ int main(int argc, char **argv)
 
   /* wait for producers */
   for(int i = 0; i < NUM_PRODUCERS; ++i)
+  {
     pthread_join(producer_threads[i], NULL);
+  }
 
   /* wait for consumers */
   for(int i = 0; i < NUM_CONSUMERS; ++i)
+  {
     pthread_join(consumer_threads[i], NULL);
+  }
 }

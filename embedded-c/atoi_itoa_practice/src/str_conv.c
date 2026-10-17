@@ -21,12 +21,16 @@
 int my_atoi(const char *str)
 {
   if(str == NULL)
+  {
     return 0;
+  }
 
   int len = strlen(str);
 
   if(len == 0)
+  {
     return 0;
+  }
 
   int negative = 0;
   int result = 0;
@@ -62,7 +66,9 @@ int my_atoi(const char *str)
   }
 
   if(negative)
+  {
     result = -1 * result;
+  }
 
   return result;
 }
@@ -70,7 +76,9 @@ int my_atoi(const char *str)
 char *my_itoa(int val, char *buf)
 {
   if(buf == NULL)
+  {
     return NULL;
+  }
 
   char *orig = buf;
 

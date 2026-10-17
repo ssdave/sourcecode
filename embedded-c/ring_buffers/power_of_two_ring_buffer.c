@@ -1,5 +1,5 @@
 /* ============================================================================
- * File: ringbuffer.c
+ * File: power_of_two_ring_buffer.c
  *
  * What is being built:
  *   Static power-of-two circular queue (`BUFFER_SIZE = 8`) using `volatile`
@@ -29,7 +29,9 @@ bool isEmpty(void)
 {
   // Queue is empty when head and tail point to the same slot
   if(head == tail)
+  {
     return true;
+  }
 
   return false;
 }
@@ -39,7 +41,9 @@ bool isFull(void)
   // One slot is reserved to distinguish full from empty: full when advancing head
   // by 1 (modulo BUFFER_SIZE via bitwise AND with BUFFER_MASK) collides with tail
   if(((head + 1) & BUFFER_MASK) == tail)
+  {
     return true;
+  }
 
   return false;
 }
@@ -47,7 +51,9 @@ bool isFull(void)
 void enqueue(int value)
 {
   if(isFull())
+  {
     return;
+  }
 
   // Store item at head and wrap head index using power-of-two bitmask
   buffer[head] = value;
@@ -57,7 +63,9 @@ void enqueue(int value)
 int dequeue(void)
 {
   if(isEmpty())
+  {
     return -1;
+  }
 
   // Read oldest item at tail and wrap tail index using power-of-two bitmask
   int ret = buffer[tail];

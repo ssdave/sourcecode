@@ -1,5 +1,5 @@
 /* ============================================================================
- * Problem 2: The Interrupt-Safe Ring Buffer
+ * File: isr_ring_buffer.c
  *
  * The Scenario:
  *   The wireless proximity tag is asleep. Suddenly, a host device initiates an
@@ -44,7 +44,6 @@ typedef struct
 
 ring_buf_t ring_buf;
 
-// Write the implementation for these functions:
 void ring_buffer_init(void)
 {
   ring_buf.read_idx = 0;

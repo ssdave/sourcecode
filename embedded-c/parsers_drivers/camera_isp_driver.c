@@ -1,5 +1,5 @@
 /* ============================================================================
- * File: camera_isp.c (Part 1 Implemented; Parts 2-5 Practice Stubs)
+ * File: camera_isp_driver.c (Part 1 Implemented; Parts 2-5 Practice Stubs)
  *
  * Status:
  *   - Part 1 (`update_camera_register`): Implemented and passing (`0x12345678` ->

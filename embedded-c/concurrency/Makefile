@@ -1,46 +1,29 @@
-.PHONY: all clean run solutions
+CC      = clang
+CFLAGS  = -Wall -Wextra -g -pthread
+TARGETS = mutex_shared_counter mutex_channel_lock_ordering condvar_thread_join condvar_barrier bounded_buffer_producer_consumer
 
-CC = gcc
-CFLAGS = -Wall -g -pthread -c
-LDFLAGS = -pthread
-SOURCES = basicMutex1.c basicMutex2.c
-PROG1 = basicMutex1
-PROG2 = basicMutex2
+.PHONY: all test clean run condition_variables
 
-# Default target builds both binaries
-all: condwait.bin $(PROG1) $(PROG2) barrier.bin producerconsumer.bin
+all: $(TARGETS)
 
-# Pattern rule to link object files into binaries with pthread support
-%.bin: %.o
-	gcc -o $@ $^ -pthread
+%: %.c
+	$(CC) $(CFLAGS) $< -o $@
 
-$(PROG1): basicMutex1.o
-	$(CC) $(LDFLAGS) $^ -o $@
+test: all
+	@for target in $(TARGETS); do \
+		echo "=== Running concurrency/$$target ==="; \
+		./$$target || exit 1; \
+	done
+	@echo "All concurrency tests passed!"
+	@$(MAKE) -C condition_variables test
 
-$(PROG2): basicMutex2.o
-	$(CC) $(LDFLAGS) $^ -o $@
-
-# Implicit rule for %.c to %.o is automatically handled by Make, 
-# but you can define CFLAGS at the top if you need specific compiler flags (e.g., CFLAGS = -Wall -g)
-
-# Target to specifically compile and run condwait.bin
-run: condwait.bin
-	./condwait.bin
-
-mutex1: basicMutex1.bin
-	./basicMutex1.bin
-
-mutex2: basicMutex2.bin
-	./basicMutex2.bin
-
-barrier: barrier.bin
-	./barrier.bin
-
-prodcons: producerconsumer.bin
-	./producerconsumer.bin
-
-# Target for solution binaries
-solutions: condwait.bin basicMutex1.bin basicMutex2.bin barrier.bin 
+run:
+	@if [ -z "$(FILE)" ]; then \
+		echo "Usage: make run FILE=<target_name> (e.g., make run FILE=mutex_shared_counter)"; \
+		exit 1; \
+	fi; \
+	./$(FILE)
 
 clean:
-	rm -f *.o *.bin *~ $(PROG1) $(PROG2)
+	rm -rf $(TARGETS) *.o *.bin *.dSYM testout.txt basicMutex1 basicMutex2
+	@$(MAKE) -C condition_variables clean

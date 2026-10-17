@@ -1,5 +1,5 @@
 /* ============================================================================
- * Problem 3: The Anti-Stalking Debouncer
+ * File: motion_alert_debouncer.c
  *
  * The Scenario:
  *   To prevent unwanted tracking, a BLE proximity tag must play a sound if it
@@ -45,7 +45,7 @@ void flush_rolling_window(int index)
   chime_play_count = 0;
 }
 
-// Write this function to be called by the accelerometer ISR:
+// Accelerometer ISR movement callback:
 // 'timestamp_sec' is the current system uptime in seconds.
 void on_movement_detected(uint32_t timestamp_sec)
 {
@@ -55,7 +55,9 @@ void on_movement_detected(uint32_t timestamp_sec)
     {
       // If within 60s of the first event in the window, append to current window
       if(timestamp_sec - rolling_window[0] <= 60)
+      {
         rolling_window[i] = timestamp_sec;
+      }
       else
       {
         // Window expired (> 60s since rolling_window[0]): flush stale events and restart window
@@ -71,12 +73,16 @@ void on_movement_detected(uint32_t timestamp_sec)
   for(int i = 0; i < 5; i++)
   {
     if(rolling_window[i] != 0)
+    {
       count++;
+    }
   }
 
   // Trigger hardware alert chime once 5 events occur within the 60s window
   if(count == 5)
+  {
     play_chime();
+  }
 
   // printf("%d %d %d %d %d %d\n", timestamp_sec, rolling_window[0], rolling_window[1],
   // rolling_window[2], rolling_window[3], rolling_window[4]);
@@ -96,9 +102,13 @@ int main()
   on_movement_detected(75);
   on_movement_detected(100);
   if(chime_play_count == 0)
+  {
     printf("[PASS] Chime remained silent.\n\n");
+  }
   else
+  {
     printf("[FAIL] Chime played inappropriately.\n\n");
+  }
 
   // TEST 2: Fast enough (5 events within 40 seconds)
   // Simulates someone actually walking with the device
@@ -110,9 +120,13 @@ int main()
   on_movement_detected(130);
   on_movement_detected(140);
   if(chime_play_count == 1)
+  {
     printf("[PASS] Chime successfully triggered.\n\n");
+  }
   else
+  {
     printf("[FAIL] Chime failed to trigger.\n\n");
+  }
 
   // TEST 3: The Sliding Window (Dropping old events)
   // Simulates moving a bit, pausing for a long time, then moving continuously
@@ -129,9 +143,13 @@ int main()
   on_movement_detected(315);
   on_movement_detected(320); // Now we have 5 new events between 300 and 320.
   if(chime_play_count == 1)
+  {
     printf("[PASS] Sliding window properly dropped expired events.\n\n");
+  }
   else
+  {
     printf("[FAIL] Sliding window logic failed.\n\n");
+  }
 
   return 0;
 }

@@ -1,24 +1,30 @@
-CC = clang
-CFLAGS = -Wall -Wextra -g -pthread
+CC      = clang
+CFLAGS  = -Wall -Wextra -g -pthread
+TARGETS = ble_payload_parser isr_ring_buffer motion_alert_debouncer secure_broadcast_coordinator
 
-.PHONY: all clean
+.PHONY: all test clean run
 
-all: problem1.bin problem2.bin problem3.bin problem4.bin
+all: $(TARGETS)
 
-problem1.bin: Problem1\ -\ BLE\ Payload\ Bit\ Extraction.c
-	$(CC) $(CFLAGS) "Problem1 - BLE Payload Bit Extraction.c" -o $@
+%: %.c
+	$(CC) $(CFLAGS) $< -o $@
 
-problem2.bin: Problem2\ -\ The\ Interrupt-Safe\ Ring\ Buffer.c
-	$(CC) $(CFLAGS) "Problem2 - The Interrupt-Safe Ring Buffer.c" -o $@
+test: all
+	@for target in $(TARGETS); do \
+		echo "=== Running ble_tracker/$$target ==="; \
+		./$$target || exit 1; \
+	done
+	@echo "All ble_tracker tests passed!"
 
-problem3.bin: Problem\ 3\ -\ The\ Anti-Stalking\ Debouncer.c
-	$(CC) $(CFLAGS) "Problem 3 - The Anti-Stalking Debouncer.c" -o $@
-
-problem4.bin: Problem\ 4\ -\ The\ Secure\ Broadcast\ Coordinator.c
-	$(CC) $(CFLAGS) "Problem 4 - The Secure Broadcast Coordinator.c" -o $@
+run:
+	@if [ -z "$(FILE)" ]; then \
+		echo "Usage: make run FILE=<target_name> (e.g., make run FILE=ble_payload_parser)"; \
+		exit 1; \
+	fi; \
+	./$(FILE)
 
 clean:
-	rm -rf *.bin *.o *.dSYM myapp \
+	rm -rf $(TARGETS) *.o *.bin *.dSYM myapp \
 		"Problem1 - BLE Payload Bit Extraction" \
 		"Problem2 - The Interrupt-Safe Ring Buffer" \
 		"Problem 3 - The Anti-Stalking Debouncer" \

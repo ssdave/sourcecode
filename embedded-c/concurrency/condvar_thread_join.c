@@ -1,5 +1,5 @@
 /* ============================================================================
- * File: condwait.c
+ * File: condvar_thread_join.c
  *
  * Attribution & Copyright:
  *   Originates from Rose-Hulman Institute of Technology — CSSE 332: Operating Systems
@@ -17,9 +17,9 @@
  *   an explicit state predicate (`bool child_done`) to avoid lost wakeups.
  *
  * What is being tested:
- *   Parent thread spawns a child worker thread (`sleep(5)`) and blocks in
- *   `thread_join()` on condition variable `c` until the child sets
- *   `child_done = true` and signals `c` inside `thread_exit()`.
+ *   Parent thread spawns a child worker thread and blocks in `thread_join()`
+ *   on condition variable `child_cond` until the child sets `child_done = true`
+ *   and signals `child_cond` inside `thread_exit()`.
  * ============================================================================ */
 
 #include <pthread.h>
@@ -29,54 +29,44 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-/**
- * In this exercise, we will try to again simulate pthread_join using condition
- * variables. We will create a thread and then implement the thread_join
- * function below.
- *
- * https://www.rose-hulman.edu/class/csse/csse332/2324b/notes/session19/
- *
- */
-
-pthread_cond_t c = PTHREAD_COND_INITIALIZER;
-pthread_mutex_t m = PTHREAD_MUTEX_INITIALIZER;
-bool child_done;
+pthread_cond_t child_cond = PTHREAD_COND_INITIALIZER;
+pthread_mutex_t child_mutex = PTHREAD_MUTEX_INITIALIZER;
+bool child_done = false;
 
 /*
  * exit from a given thread
  */
 void thread_exit(void)
 {
-  // Hold mutex m while updating state predicate child_done so a wakeup is never lost
-  pthread_mutex_lock(&m);
+  // Hold child_mutex while updating state predicate child_done so a wakeup is never lost
+  pthread_mutex_lock(&child_mutex);
   child_done = true;
-  pthread_cond_signal(&c);
-  pthread_mutex_unlock(&m);
+  pthread_cond_signal(&child_cond);
+  pthread_mutex_unlock(&child_mutex);
 }
 
 void *child(void *arg)
 {
-  printf("Child\n");
-  sleep(5);
-  printf("Child completed\n");
+  printf("Child starting work...\n");
+  usleep(100000); // 100ms simulation
+  printf("Child completed work\n");
   thread_exit();
 
   return NULL;
 }
 
 /**
- * thread_join - Wait for the thread that we create in main by using a condition
- * variable.
+ * thread_join - Wait for the child thread by sleeping on condition variable.
  */
 void thread_join(void)
 {
   // Re-check !child_done in a while loop to guard against spurious wakeups
-  pthread_mutex_lock(&m);
+  pthread_mutex_lock(&child_mutex);
   while(!child_done)
   {
-    pthread_cond_wait(&c, &m);
+    pthread_cond_wait(&child_cond, &child_mutex);
   }
-  pthread_mutex_unlock(&m);
+  pthread_mutex_unlock(&child_mutex);
 }
 
 int main(int argc, char **argv)
@@ -88,6 +78,6 @@ int main(int argc, char **argv)
   printf("Parent waiting for the child to finish\n");
   thread_join();
 
-  /* done */
-  exit(0);
+  printf("[PASS] Parent successfully joined child thread via condition variable\n");
+  return 0;
 }

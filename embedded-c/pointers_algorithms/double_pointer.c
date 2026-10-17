@@ -38,13 +38,17 @@ bool allocate_buffer(uint8_t **out_ptr, size_t size)
 {
   // Guard against NULL output pointer or zero-byte allocation request
   if((out_ptr == NULL) || (size == 0))
+  {
     return false;
+  }
 
   // Dereference out_ptr once to write the heap address into the caller's pointer variable
   *out_ptr = malloc(sizeof(uint8_t) * size);
 
   if(*out_ptr == NULL)
+  {
     return false;
+  }
 
   return true;
 }
@@ -56,15 +60,17 @@ bool allocate_buffer(uint8_t **out_ptr, size_t size)
 void list_push(Node **head, int val)
 {
   if(head == NULL)
+  {
     return;
+  }
 
   // Link the new node in front of the current head (*head) and update *head in-place
   Node *temp = *head;
-  Node *new = (Node *)malloc(sizeof(Node));
-  new->val = val;
-  new->next = temp;
+  Node *new_node = (Node *)malloc(sizeof(Node));
+  new_node->val = val;
+  new_node->next = temp;
 
-  *head = new;
+  *head = new_node;
 }
 
 /**
@@ -76,8 +82,12 @@ char *next_token(char **cursor, char delim)
 {
   // Stop when cursor is NULL or already positioned at the terminating NUL byte
   if((cursor == NULL) || (**cursor == '\0'))
+  {
     return NULL;
+  }
 
+  // Note: strlen(*cursor) bytes leave no room for the NUL terminator when the
+  // token runs to the end of the string; allocate strlen(*cursor) + 1.
   char *result = (char *)malloc(strlen(*cursor));
   char *start = result;
 
@@ -87,8 +97,12 @@ char *next_token(char **cursor, char delim)
     strncpy(result, *cursor, 1);
     result++;
     (*cursor)++;
+    // Note: this early return skips `*result = '\0'`, so the last token ("100")
+    // is returned without a NUL terminator (strcmp then reads past the buffer).
     if(**cursor == '\0')
+    {
       return start;
+    }
   }
 
   // Advance caller's cursor past the delimiter and NUL-terminate the extracted token

@@ -13,58 +13,58 @@
  *   - Example 2: nums = [1, 0, 1, 1, 0, 1] -> 2
  * ============================================================================ */
 
-#include <stdio.h>
 #include <assert.h>
+#include <stdio.h>
 
 int findMaxConsecutiveOnes(int *nums, int numsSize)
 {
-    int count = 0;
-    int max = 0;
-    int curr = 0;
-    if(numsSize == 1)
+  int count = 0;
+  int max = 0;
+  int curr = 0;
+  if(numsSize == 1)
+  {
+    if(nums[0] == 1)
     {
-        if(nums[0] == 1)
-        {
-            return 1;
-        }
-        else
-        {
-            return 0;
-        }
+      return 1;
     }
-    while(count < numsSize)
+    else
     {
-        if(nums[count] == 1)
-        {
-            curr++;
-        }
-        else
-        {
-            curr = 0;
-        }
-        if(curr > max)
-        {
-            max = curr;
-        }
-        count++;
+      return 0;
     }
-    return max;
+  }
+  while(count < numsSize)
+  {
+    if(nums[count] == 1)
+    {
+      curr++;
+    }
+    else
+    {
+      curr = 0;
+    }
+    if(curr > max)
+    {
+      max = curr;
+    }
+    count++;
+  }
+  return max;
 }
 
 int main(void)
 {
-    printf("=== LeetCode #485: Max Consecutive Ones ===\n");
+  printf("=== LeetCode #485: Max Consecutive Ones ===\n");
 
-    int nums1[] = {1, 1, 0, 1, 1, 1};
-    int r1 = findMaxConsecutiveOnes(nums1, 6);
-    printf("Example 1: [1,1,0,1,1,1] -> %d\n", r1);
-    assert(r1 == 3);
+  int nums1[] = {1, 1, 0, 1, 1, 1};
+  int r1 = findMaxConsecutiveOnes(nums1, 6);
+  printf("Example 1: [1,1,0,1,1,1] -> %d\n", r1);
+  assert(r1 == 3);
 
-    int nums2[] = {1, 0, 1, 1, 0, 1};
-    int r2 = findMaxConsecutiveOnes(nums2, 6);
-    printf("Example 2: [1,0,1,1,0,1] -> %d\n", r2);
-    assert(r2 == 2);
+  int nums2[] = {1, 0, 1, 1, 0, 1};
+  int r2 = findMaxConsecutiveOnes(nums2, 6);
+  printf("Example 2: [1,0,1,1,0,1] -> %d\n", r2);
+  assert(r2 == 2);
 
-    printf("All tests passed!\n");
-    return 0;
+  printf("All tests passed!\n");
+  return 0;
 }

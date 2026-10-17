@@ -29,7 +29,9 @@ uint32_t set_bit(uint32_t reg, uint8_t bit_num)
 {
   // Guard against shifts >= 32 bits (undefined behavior on 32-bit types)
   if(bit_num > (sizeof(uint32_t) * 8 - 1))
+  {
     return reg;
+  }
 
   // Left-shift 1 to bit_num and OR into reg to force that bit to 1
   reg |= (1 << bit_num);
@@ -43,7 +45,9 @@ uint32_t set_bit(uint32_t reg, uint8_t bit_num)
 uint32_t clear_bit(uint32_t reg, uint8_t bit_num)
 {
   if(bit_num > (sizeof(uint32_t) * 8 - 1))
+  {
     return reg;
+  }
 
   // Invert single-bit mask ~(1 << bit_num) and AND with reg to clear only bit_num
   reg &= ~(1 << bit_num);
@@ -57,7 +61,9 @@ uint32_t clear_bit(uint32_t reg, uint8_t bit_num)
 uint32_t toggle_bit(uint32_t reg, uint8_t bit_num)
 {
   if(bit_num > (sizeof(uint32_t) * 8 - 1))
+  {
     return reg;
+  }
 
   // XOR with (1 << bit_num) flips bit_num while XOR with 0 preserves all other bits
   reg ^= (1 << bit_num);
@@ -90,14 +96,20 @@ bool is_power_of_two(uint32_t val)
 {
   // Zero has no set bits and is not a power of two
   if(val == 0)
+  {
     return false;
+  }
 
   // A power of two has exactly one set bit; subtracting 1 clears that bit and
   // sets all lower bits, so (val & (val - 1)) is 0 iff val is a power of two.
   if((val & (val - 1)) == 0)
+  {
     return true;
+  }
   else
+  {
     return false;
+  }
 }
 
 int main(void)

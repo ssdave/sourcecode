@@ -1,10 +1,10 @@
 /* ============================================================================
- * File: ring_buffer.c (Practice Harness / Starter Template)
+ * File: counted_ring_buffer.c (Practice Harness / Starter Template)
  *
  * Note:
  *   This file is an unimplemented unit-test harness kept for timed practice
  *   (`ring_buf_init` is implemented; `ring_buf_is_empty`, `ring_buf_is_full`,
- *   `ring_buf_push`, and `ring_buf_pop` are starter stubs). See `ringbuffer.c`
+ *   `ring_buf_push`, and `ring_buf_pop` are starter stubs). See `power_of_two_ring_buffer.c`
  *   in this directory for the completed power-of-two circular buffer.
  *
  * What is being built:

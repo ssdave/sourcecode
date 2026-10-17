@@ -1,9 +1,10 @@
 /* ============================================================================
- * File: prodcons_condvar.c (CSSE 332 Lab Starter Template)
+ * File: stack_bounded_buffer.c (CSSE 332 Lab Starter Template)
  *
  * Status:
  *   Unimplemented CSSE 332 lab starter template preserved for practice.
- *   (See `../producerconsumer.c`, `max.c`, and `rooms.c` for completed solutions.)
+ *   (See `../bounded_buffer_producer_consumer.c`, `bounded_critical_section.c`, and
+ * `two_stage_service_rooms.c` for completed solutions.)
  *
  * Attribution & Copyright:
  *   Originates from Rose-Hulman Institute of Technology — CSSE 332: Operating Systems

@@ -13,132 +13,132 @@
  *   - Example 2: head = [1, 1, 2, 3, 3] -> [1, 2, 3]
  * ============================================================================ */
 
+#include <assert.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdbool.h>
-#include <assert.h>
 
 struct ListNode
 {
-    int val;
-    struct ListNode *next;
+  int val;
+  struct ListNode *next;
 };
 
 static struct ListNode *createList(const int *vals, int n)
 {
-    struct ListNode *head = NULL;
-    struct ListNode *tail = NULL;
-    for(int i = 0; i < n; i++)
+  struct ListNode *head = NULL;
+  struct ListNode *tail = NULL;
+  for(int i = 0; i < n; i++)
+  {
+    struct ListNode *node = (struct ListNode *)malloc(sizeof(struct ListNode));
+    node->val = vals[i];
+    node->next = NULL;
+    if(head == NULL)
     {
-        struct ListNode *node = (struct ListNode *)malloc(sizeof(struct ListNode));
-        node->val = vals[i];
-        node->next = NULL;
-        if(head == NULL)
-        {
-            head = node;
-            tail = node;
-        }
-        else
-        {
-            tail->next = node;
-            tail = node;
-        }
+      head = node;
+      tail = node;
     }
-    return head;
+    else
+    {
+      tail->next = node;
+      tail = node;
+    }
+  }
+  return head;
 }
 
 static bool assertListEquals(struct ListNode *head, const int *expected, int n)
 {
-    struct ListNode *curr = head;
-    for(int i = 0; i < n; i++)
+  struct ListNode *curr = head;
+  for(int i = 0; i < n; i++)
+  {
+    if(curr == NULL || curr->val != expected[i])
     {
-        if(curr == NULL || curr->val != expected[i])
-        {
-            return false;
-        }
-        curr = curr->next;
+      return false;
     }
-    return (curr == NULL);
+    curr = curr->next;
+  }
+  return (curr == NULL);
 }
 
 static void printList(struct ListNode *head)
 {
-    printf("[");
-    struct ListNode *curr = head;
-    while(curr != NULL)
+  printf("[");
+  struct ListNode *curr = head;
+  while(curr != NULL)
+  {
+    printf("%d", curr->val);
+    if(curr->next != NULL)
     {
-        printf("%d", curr->val);
-        if(curr->next != NULL)
-        {
-            printf(", ");
-        }
-        curr = curr->next;
+      printf(", ");
     }
-    printf("]");
+    curr = curr->next;
+  }
+  printf("]");
 }
 
 static void freeList(struct ListNode *head)
 {
-    while(head != NULL)
-    {
-        struct ListNode *tmp = head;
-        head = head->next;
-        free(tmp);
-    }
+  while(head != NULL)
+  {
+    struct ListNode *tmp = head;
+    head = head->next;
+    free(tmp);
+  }
 }
 
 struct ListNode *deleteDuplicates(struct ListNode *head)
 {
-    if(head == NULL)
+  if(head == NULL)
+  {
+    return NULL;
+  }
+
+  struct ListNode *iter = head;
+  struct ListNode *prev = NULL;
+
+  while(iter != NULL)
+  {
+    if(prev && (iter->val == prev->val))
     {
-        return NULL;
+      struct ListNode *temp = iter;
+      iter = iter->next;
+      prev->next = iter;
+
+      free(temp);
+      continue;
+    }
+    else
+    {
+      prev = iter;
     }
 
-    struct ListNode *iter = head;
-    struct ListNode *prev = NULL;
+    iter = iter->next;
+  }
 
-    while(iter != NULL)
-    {
-        if(prev && (iter->val == prev->val))
-        {
-            struct ListNode *temp = iter;
-            iter = iter->next;
-            prev->next = iter;
-
-            free(temp);
-            continue;
-        }
-        else
-        {
-            prev = iter;
-        }
-
-        iter = iter->next;
-    }
-
-    return head;
+  return head;
 }
 
 int main(void)
 {
-    printf("=== LeetCode #83: Remove Duplicates from Sorted List ===\n");
+  printf("=== LeetCode #83: Remove Duplicates from Sorted List ===\n");
 
-    int a1[] = {1, 1, 2}, exp1[] = {1, 2};
-    struct ListNode *l1 = deleteDuplicates(createList(a1, 3));
-    printf("Example 1: [1, 1, 2]       -> ");
-    printList(l1);
-    printf("\n");
-    assert(assertListEquals(l1, exp1, 2));
-    freeList(l1);
+  int a1[] = {1, 1, 2}, exp1[] = {1, 2};
+  struct ListNode *l1 = deleteDuplicates(createList(a1, 3));
+  printf("Example 1: [1, 1, 2]       -> ");
+  printList(l1);
+  printf("\n");
+  assert(assertListEquals(l1, exp1, 2));
+  freeList(l1);
 
-    int a2[] = {1, 1, 2, 3, 3}, exp2[] = {1, 2, 3};
-    struct ListNode *l2 = deleteDuplicates(createList(a2, 5));
-    printf("Example 2: [1, 1, 2, 3, 3] -> ");
-    printList(l2);
-    printf("\n");
-    assert(assertListEquals(l2, exp2, 3));
-    freeList(l2);
+  int a2[] = {1, 1, 2, 3, 3}, exp2[] = {1, 2, 3};
+  struct ListNode *l2 = deleteDuplicates(createList(a2, 5));
+  printf("Example 2: [1, 1, 2, 3, 3] -> ");
+  printList(l2);
+  printf("\n");
+  assert(assertListEquals(l2, exp2, 3));
+  freeList(l2);
 
-    printf("All tests passed!\n");
-    return 0;
+  printf("All tests passed!\n");
+  return 0;
 }
