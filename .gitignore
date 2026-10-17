@@ -18,24 +18,49 @@ testout.txt
 # Xcode user data
 xcuserdata/
 
-# Compiled binaries
+# Compiled embedded-c binaries
 embedded-c/**/myapp
 embedded-c/**/test_runner
+embedded-c/ble_tracker/ble_payload_parser
+embedded-c/ble_tracker/isr_ring_buffer
+embedded-c/ble_tracker/motion_alert_debouncer
+embedded-c/ble_tracker/secure_broadcast_coordinator
+embedded-c/bit_manipulation/bit_basics
+embedded-c/bit_manipulation/bitfield_operations
+embedded-c/bit_manipulation/register_union_overlay
+embedded-c/concurrency/mutex_shared_counter
+embedded-c/concurrency/mutex_channel_lock_ordering
+embedded-c/concurrency/condvar_thread_join
+embedded-c/concurrency/condvar_barrier
+embedded-c/concurrency/bounded_buffer_producer_consumer
+embedded-c/concurrency/condition_variables/bounded_critical_section
+embedded-c/concurrency/condition_variables/ordered_thread_entry
+embedded-c/concurrency/condition_variables/stack_bounded_buffer
+embedded-c/concurrency/condition_variables/two_stage_service_rooms
+embedded-c/concurrency/condition_variables/tunnel_traffic_control
+embedded-c/parsers_drivers/tlv_parser
+embedded-c/parsers_drivers/uint32_serializer
+embedded-c/parsers_drivers/camera_isp_driver
+embedded-c/pointers_algorithms/double_pointer
+embedded-c/pointers_algorithms/remove_char
+embedded-c/pointers_algorithms/binary_search
+embedded-c/pointers_algorithms/singly_linked_list
+embedded-c/ring_buffers/power_of_two_ring_buffer
+embedded-c/ring_buffers/counted_ring_buffer
+embedded-c/ring_buffers/moving_average_filter
+
+# Legacy names (for backward-compatibility with clean targets)
 embedded-c/ble_tracker/Problem1 - BLE Payload Bit Extraction
 embedded-c/ble_tracker/Problem2 - The Interrupt-Safe Ring Buffer
 embedded-c/ble_tracker/Problem 3 - The Anti-Stalking Debouncer
 embedded-c/ble_tracker/Problem 4 - The Secure Broadcast Coordinator
-embedded-c/bit_manipulation/bit_basics
 embedded-c/bit_manipulation/bit_level2
 embedded-c/bit_manipulation/registers
 embedded-c/ring_buffers/ringbuffer
 embedded-c/ring_buffers/ring_buffer
 embedded-c/ring_buffers/movingaverage
-embedded-c/parsers_drivers/tlv_parser
 embedded-c/parsers_drivers/serialize
 embedded-c/parsers_drivers/camera_isp
-embedded-c/pointers_algorithms/double_pointer
-embedded-c/pointers_algorithms/remove_char
 embedded-c/pointers_algorithms/binarysearch
 embedded-c/pointers_algorithms/Hello
 embedded-c/concurrency/basicMutex1
@@ -45,6 +70,8 @@ embedded-c/concurrency/conditionalvariables/max
 embedded-c/concurrency/conditionalvariables/prodcons_condvar
 embedded-c/concurrency/conditionalvariables/rooms
 embedded-c/concurrency/conditionalvariables/tunnel
+
+# Compiled OS Systems binaries
 os-systems/simpleshell/simpleshell
 os-systems/simpleshell/donothing
 
