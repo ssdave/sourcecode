@@ -22,9 +22,15 @@
 
 static char g_output[128];
 
-void printFoo(void) { strcat(g_output, "foo"); }
+void printFoo(void)
+{
+  strcat(g_output, "foo");
+}
 
-void printBar(void) { strcat(g_output, "bar"); }
+void printBar(void)
+{
+  strcat(g_output, "bar");
+}
 
 typedef struct
 {

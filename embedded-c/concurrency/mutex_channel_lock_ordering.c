@@ -77,7 +77,10 @@ void purpleCommand()
   pthread_mutex_unlock(&blueLock);
 }
 
-void whiteCommand() { usleep(100); }
+void whiteCommand()
+{
+  usleep(100);
+}
 
 void *thread1(void *p)
 {

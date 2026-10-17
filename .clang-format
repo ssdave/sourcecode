@@ -4,4 +4,5 @@ SpaceBeforeParens: Never
 SpacesInParentheses: false
 IndentWidth: 2
 InsertBraces: true
+AllowShortFunctionsOnASingleLine: None
 ColumnLimit: 100

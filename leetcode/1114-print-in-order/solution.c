@@ -22,11 +22,20 @@
 
 static char g_output[64];
 
-void printFirst(void) { strcat(g_output, "first"); }
+void printFirst(void)
+{
+  strcat(g_output, "first");
+}
 
-void printSecond(void) { strcat(g_output, "second"); }
+void printSecond(void)
+{
+  strcat(g_output, "second");
+}
 
-void printThird(void) { strcat(g_output, "third"); }
+void printThird(void)
+{
+  strcat(g_output, "third");
+}
 
 typedef struct
 {
