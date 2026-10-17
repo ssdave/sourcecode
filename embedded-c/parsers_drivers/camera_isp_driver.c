@@ -81,13 +81,13 @@ LockFreeQueue vsync_queue = {0};
 // Constraint: Lock-free. Memory barriers required. Prevent memory leaks.
 void enqueue_frame_force(LockFreeQueue *q, Frame *new_frame)
 {
-  // TODO: Write your overflow-handling enqueue logic here
+  // AI Review Feedback (Practice Exercise): Implement lock-free queue overflow handling here
 }
 
 // Goal: Pop and return the oldest frame. Return NULL if empty.
 Frame *dequeue_frame(LockFreeQueue *q)
 {
-  // TODO: Write your dequeue logic here
+  // AI Review Feedback (Practice Exercise): Implement dequeue logic here
   return NULL;
 }
 
@@ -99,7 +99,7 @@ Frame *dequeue_frame(LockFreeQueue *q)
 // Constraint 2: Optimize for 32-bit ARM (copy 4 bytes at a time where possible).
 void custom_memmove(void *dest, const void *src, size_t num_bytes)
 {
-  // TODO: Write your overlapping, word-aligned copy logic here
+  // AI Review Feedback (Practice Exercise): Implement overlapping, word-aligned copy logic here
 }
 
 // ============================================================================
@@ -125,7 +125,7 @@ typedef enum
 // Returns: 1 if sequence is STATE_DONE, 0 otherwise.
 int poll_pmu_boot_sequence(uint64_t current_sys_time_ms)
 {
-  // TODO: Write your non-blocking state machine here
+  // AI Review Feedback (Practice Exercise): Implement non-blocking state machine here
   return 0;
 }
 

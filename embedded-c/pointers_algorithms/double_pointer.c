@@ -86,8 +86,9 @@ char *next_token(char **cursor, char delim)
     return NULL;
   }
 
-  // Note: strlen(*cursor) bytes leave no room for the NUL terminator when the
-  // token runs to the end of the string; allocate strlen(*cursor) + 1.
+  // AI Review Feedback: strlen(*cursor) bytes allocate space for characters but leave no room
+  // for the NUL terminator when the token runs to the end of the string; allocate strlen(*cursor)
+  // + 1.
   char *result = (char *)malloc(strlen(*cursor));
   char *start = result;
 
@@ -97,8 +98,8 @@ char *next_token(char **cursor, char delim)
     strncpy(result, *cursor, 1);
     result++;
     (*cursor)++;
-    // Note: this early return skips `*result = '\0'`, so the last token ("100")
-    // is returned without a NUL terminator (strcmp then reads past the buffer).
+    // AI Review Feedback: This early return skips writing the NUL terminator (*result = '\0'),
+    // so the last token is returned without string termination.
     if(**cursor == '\0')
     {
       return start;

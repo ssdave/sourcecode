@@ -2,7 +2,10 @@
 
 Personal repository for hands-on systems programming, embedded C/firmware development, POSIX threads (`pthreads`) concurrency, operating systems internals, and Swift/UIKit engineering practice.
 
-> **Note on Workflow & AI Usage**: All core problem solutions, bit-level algorithms, concurrency synchronization logic, and operating systems exercises in this repository are written hands-on for systems learning and technical interview preparation. AI tools are used where helpful to standardize code formatting (`.clang-format`), structure documentation and explanatory comments, and scaffold unit test harnesses.
+> **Note on Workflow, Authentic Code & AI Code Review**:
+> - **Authentic Author Code**: All core problem solutions, data structures, concurrency synchronization schemes, and operating systems exercises in this repository are written hands-on by the author to showcase genuine progression, deep conceptual understanding, and systems practice.
+> - **AI Agents & Automated Review**: Collaborative AI subagents (`builder` and `reviewer`) format code style (`.clang-format`), maintain build infrastructure, and perform adversarial code and security reviews.
+> - **Transparent Review Feedback**: Rather than silently rewriting or artificially "perfecting" author code, review observations regarding memory management, edge cases, and algorithmic nuances are tagged directly in the code with **`// AI Review Feedback:`** comments so learning opportunities and iterative improvements are completely transparent to interviewers and engineering teams.
 
 ---
 

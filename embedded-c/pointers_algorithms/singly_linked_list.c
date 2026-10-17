@@ -36,7 +36,7 @@ void append_node(ListNode *head, int value)
     head = head->next;
   }
 
-  // Note: malloc() result is not checked for NULL before being dereferenced.
+  // AI Review Feedback: malloc() return address is not checked for NULL before dereferencing.
   ListNode *new_node = (ListNode *)malloc(sizeof(ListNode));
   new_node->value = value;
   new_node->next = NULL;
@@ -46,9 +46,8 @@ void append_node(ListNode *head, int value)
 
 void print_list(ListNode *head)
 {
-  // Note: `head->next != NULL` stops one node early, so the tail value (4) is
-  // never printed; `while(head != NULL)` would visit every node (and also handle
-  // an empty list without dereferencing NULL).
+  // AI Review Feedback: `head->next != NULL` terminates one node early, omitting the
+  // tail value (4); changing to `while(head != NULL)` traverses the entire list.
   while(head->next != NULL)
   {
     printf("Value %d\t", head->value);
@@ -73,7 +72,7 @@ int main()
   print_list(head);
   printf("\n");
 
-  // Note: the list nodes are never freed; add a free_list() helper that walks
-  // the list and free()s each node to avoid leaking heap memory.
+  // AI Review Feedback: Allocated list nodes are not freed before process termination.
+  // Consider implementing a free_list() helper to prevent memory leaks in long-running processes.
   return 0;
 }

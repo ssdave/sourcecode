@@ -93,7 +93,7 @@ void *customer(void *arg)
   if(num_customer_secondroom == 2)
   {
     num_customer_wait_secondroom++;
-    // Note: num_customer_wait_secondroom--; is placed inside the while loop; on
+    // AI Review Feedback: num_customer_wait_secondroom--; is placed inside the while loop; on
     // spurious wakeup, it decrements the waiting counter multiple times. It should
     // be decremented once after exiting the while loop.
     while(num_customer_secondroom == 2)
