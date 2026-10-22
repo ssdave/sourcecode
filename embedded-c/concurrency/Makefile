@@ -1,6 +1,14 @@
 CC      = clang
 CFLAGS  = -Wall -Wextra -g -pthread
-TARGETS = mutex_shared_counter mutex_channel_lock_ordering condvar_thread_join condvar_barrier bounded_buffer_producer_consumer
+TARGETS = mutex_shared_counter \
+          mutex_channel_lock_ordering \
+          condvar_thread_join \
+          condvar_barrier \
+          bounded_buffer_producer_consumer \
+          custom_semaphore \
+          reader_writer_lock \
+          dining_philosophers \
+          atomic_spinlock
 
 .PHONY: all test clean run condition_variables
 
@@ -22,6 +30,7 @@ run:
 		echo "Usage: make run FILE=<target_name> (e.g., make run FILE=mutex_shared_counter)"; \
 		exit 1; \
 	fi; \
+	$(MAKE) $(FILE); \
 	./$(FILE)
 
 clean:

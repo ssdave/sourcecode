@@ -61,3 +61,10 @@ make clean
 ### 7. Standalone Libraries with Unit Test Suites
 - **[`./endian_practice/`](./endian_practice)** *(Implemented — Passing)* — `swap_endian_16`, `swap_endian_32`, `swap_endian_64`, `is_system_little_endian`, and `swap_endian_buffer_32`.
 - **[`./atoi_itoa_practice/`](./atoi_itoa_practice)** *(Implemented — Passing)* — Custom `my_atoi` and `my_itoa` with assertion test runner.
+
+### 8. Hardware Interfacing, MMIO & Device Drivers ([`./device_drivers/`](./device_drivers))
+*Draws from computer architecture, bus specifications, and kernel device driver principles (CS:APP Chapter 6, OSTEP Chapter 36, PCI Express Base Specification, Linux kernel driver architecture).*
+- **[`mmio_uart_driver.c`](./device_drivers/mmio_uart_driver.c)** *(Scaffolded — Ready for Implementation)* — Memory-Mapped I/O hardware peripheral controller (`SR`, `DR`, `CR`, `BSRR`), polling TX/RX, and atomic bit-set-reset operations.
+- **[`pcie_config_driver.c`](./device_drivers/pcie_config_driver.c)** *(Scaffolded — Ready for Implementation)* — PCIe Type 0 Configuration Space probe and Base Address Register (BAR) sizing engine (`0xFFFFFFFF` aperture probe, 32-bit vs 64-bit BARs).
+- **[`dma_ring_buffer_driver.c`](./device_drivers/dma_ring_buffer_driver.c)** *(Scaffolded — Ready for Implementation)* — Coherent DMA circular descriptor ring controller with ownership handoffs (`OWN` bit), hardware doorbell notification, and completion reaping.
+

@@ -33,6 +33,10 @@ embedded-c/concurrency/mutex_channel_lock_ordering
 embedded-c/concurrency/condvar_thread_join
 embedded-c/concurrency/condvar_barrier
 embedded-c/concurrency/bounded_buffer_producer_consumer
+embedded-c/concurrency/custom_semaphore
+embedded-c/concurrency/reader_writer_lock
+embedded-c/concurrency/dining_philosophers
+embedded-c/concurrency/atomic_spinlock
 embedded-c/concurrency/condition_variables/bounded_critical_section
 embedded-c/concurrency/condition_variables/ordered_thread_entry
 embedded-c/concurrency/condition_variables/stack_bounded_buffer
@@ -76,6 +80,11 @@ os-systems/simpleshell/simpleshell
 os-systems/simpleshell/donothing
 os-systems/process_lab/simple_test
 os-systems/process_lab/process_test_runner
+os-systems/pipes_deep_dive/prime_sieve_pipeline
+os-systems/pipes_deep_dive/phantom_writer
+os-systems/pipes_deep_dive/broken_pipe
+os-systems/pipes_deep_dive/multi_writer_collector
+os-systems/pipes_deep_dive/stream_null_terminator
 
 # Compiled LeetCode binaries
 leetcode/*/solution

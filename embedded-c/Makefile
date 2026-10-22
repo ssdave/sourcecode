@@ -7,7 +7,8 @@ SUBDIRS = \
 	endian_practice \
 	atoi_itoa_practice \
 	concurrency \
-	concurrency/conditionalvariables
+	concurrency/conditionalvariables \
+	device_drivers
 
 .PHONY: all clean $(SUBDIRS)
 

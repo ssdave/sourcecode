@@ -14,11 +14,13 @@ MODULES = \
 	embedded-c/bit_manipulation \
 	embedded-c/ble_tracker \
 	embedded-c/concurrency \
+	embedded-c/device_drivers \
 	embedded-c/parsers_drivers \
 	embedded-c/pointers_algorithms \
 	embedded-c/ring_buffers \
 	os-systems/simpleshell \
 	os-systems/process_lab \
+	os-systems/pipes_deep_dive \
 	leetcode
 
 .PHONY: all test clean format $(MODULES)
