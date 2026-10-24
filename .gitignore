@@ -52,6 +52,11 @@ embedded-c/pointers_algorithms/singly_linked_list
 embedded-c/ring_buffers/power_of_two_ring_buffer
 embedded-c/ring_buffers/counted_ring_buffer
 embedded-c/ring_buffers/moving_average_filter
+embedded-c/device_drivers/mmio_uart_driver
+embedded-c/device_drivers/pcie_config_driver
+embedded-c/device_drivers/dma_ring_buffer_driver
+embedded-c/device_drivers/i2c_bitbang_driver
+embedded-c/device_drivers/rtos_sensor_pipeline
 
 # Legacy names (for backward-compatibility with clean targets)
 embedded-c/ble_tracker/Problem1 - BLE Payload Bit Extraction

@@ -1,8 +1,10 @@
 CC      = clang
-CFLAGS  = -Wall -Wextra -g
+CFLAGS  = -Wall -Wextra -g -pthread
 TARGETS = mmio_uart_driver \
           pcie_config_driver \
-          dma_ring_buffer_driver
+          dma_ring_buffer_driver \
+          i2c_bitbang_driver \
+          rtos_sensor_pipeline
 
 .PHONY: all test clean run
 
