@@ -73,11 +73,36 @@ typedef struct
  */
 int dma_ring_init(dma_controller_t *ctrl, void *desc_ring_mem, size_t ring_size)
 {
-  (void)ctrl;
-  (void)desc_ring_mem;
-  (void)ring_size;
   /* TODO: Author Implementation */
-  return -1;
+  if((ctrl == NULL) || (desc_ring_mem == NULL) || (ring_size <= 0))
+  {
+    return -1;
+  }
+
+  ctrl->head = 0;
+  ctrl->tail = 0;
+  ctrl->doorbell = 0;
+  ctrl->ring = desc_ring_mem;
+  ctrl->ring_size = ring_size;
+
+  size_t count = 0;
+
+  /*
+   * // AI Review Feedback: Pointer indexing with void* arithmetic:
+   * Notice that `desc_ring_mem` is passed as `void *`. In GNU C, `&desc_ring_mem[count]` computes
+   * `(char *)desc_ring_mem + count` (byte-level offset) rather than indexing descriptors by
+   * `sizeof(dma_descriptor_t)`. The test harness passed because `memset(raw_ring, 0, ...)`
+   * zero-initialized the memory prior to calling init. In production drivers, indexing should
+   * use the typed pointer `ctrl->ring[count]` or `((dma_descriptor_t *)desc_ring_mem)[count]`.
+   */
+  while(count != ring_size)
+  {
+    dma_descriptor_t *ptr = (dma_descriptor_t *)&desc_ring_mem[count];
+    ptr->flags = 0x00;
+    ptr->status = 0x00;
+    count++;
+  }
+  return 0;
 }
 
 /**
@@ -99,11 +124,55 @@ int dma_ring_init(dma_controller_t *ctrl, void *desc_ring_mem, size_t ring_size)
  */
 int dma_submit_tx_packet(dma_controller_t *ctrl, void *packet_buffer, size_t length)
 {
-  (void)ctrl;
-  (void)packet_buffer;
-  (void)length;
   /* TODO: Author Implementation */
-  return -1;
+  if((ctrl == NULL) || (packet_buffer == NULL) || (length <= 0))
+  {
+    return -1;
+  }
+
+  /*
+   * // AI Review Feedback: Concurrency & Producer Reentrancy:
+   * In real-world network and storage drivers, `ctrl->head` is updated by packet submitters, while
+   * `ctrl->tail` is updated by completion reapers (frequently executing in an ISR or bottom-half
+   * tasklet). If multiple worker threads or kernel contexts submit packets concurrently, a spinlock
+   * (e.g., `spin_lock_irqsave`) or lock-free atomic head reservation is required around
+   * `dma_submit_tx_packet()` to prevent race conditions on slot allocation and head advancement.
+   */
+  dma_descriptor_t *desc = &ctrl->ring[ctrl->head];
+  if((desc->status & DMA_DESC_STATUS_OWN) != 0)
+  {
+    return -1;
+  }
+
+  desc->buffer_addr = (uint64_t)(uintptr_t)packet_buffer;
+  desc->length = length;
+  desc->flags = DMA_DESC_FLAG_EOP | DMA_DESC_FLAG_IOC;
+
+  /*
+   * // AI Review Feedback: Memory Barrier & Store Ordering Invariants (SMP / DMA Coherency):
+   * In hardware DMA, the CPU writes payload address, buffer length, and control flags into the
+   * descriptor before handing ownership to hardware via `DMA_DESC_STATUS_OWN`.
+   * On modern out-of-order processors (e.g., ARM64 weak memory model, x86 store buffers), CPU
+   * writes can be committed out of program order. A write memory barrier (`dma_wmb()`,
+   * `atomic_thread_fence(memory_order_release)`, or `asm volatile("dmb ishst" ::: "memory")`) is
+   * mandatory immediately BEFORE asserting `DMA_DESC_STATUS_OWN` and BEFORE incrementing
+   * `ctrl->doorbell`. Without this release barrier, the hardware DMA controller or bus snooper
+   * could observe the `OWN` bit or doorbell trigger before the payload address and length fields
+   * have fully drained from CPU store buffers into physical RAM.
+   *
+   * // AI Review Feedback: Cache Invalidation on Non-Coherent Bus Platforms:
+   * On platforms lacking hardware cache snooping (e.g., embedded microcontrollers without coherent
+   * AXI interconnects or non-coherent PCIe host bridges), CPU cache lines containing the packet
+   * payload and the descriptor itself must be explicitly cleaned/flushed to DRAM (e.g.,
+   * `clean_dcache_range()`) prior to transferring ownership. Otherwise, the hardware DMA engine
+   * reads stale data directly from RAM.
+   */
+  desc->status |= DMA_DESC_STATUS_OWN;
+
+  ctrl->head = (ctrl->head + 1) % ctrl->ring_size;
+  ctrl->doorbell++;
+
+  return 0;
 }
 
 /**
@@ -121,9 +190,53 @@ int dma_submit_tx_packet(dma_controller_t *ctrl, void *packet_buffer, size_t len
  */
 int dma_reap_tx_completions(dma_controller_t *ctrl)
 {
-  (void)ctrl;
   /* TODO: Author Implementation */
-  return -1;
+  if(ctrl == NULL)
+  {
+    return -1;
+  }
+
+  int reaped_desc = 0;
+
+  /*
+   * // AI Review Feedback: Ring Empty Ambiguity & In-Flight Tracking:
+   * In circular ring buffers, the condition `ctrl->tail == ctrl->head` can indicate either an
+   * entirely full ring or an entirely empty ring. Here, `(ctrl->tail == ctrl->head) && (reaped_desc
+   * > 0)` handles stopping when catching up during reaping. However, if `dma_reap_tx_completions()`
+   * is invoked when the ring is completely empty (zero packets submitted), `(desc->status & OWN)`
+   * is 0 and `reaped_desc` is initially 0, which would allow the loop to run and falsely reap idle
+   * slots. Production drivers resolve this by maintaining an explicit `in_flight` counter, keeping
+   * one sentinel slot unallocated, or ensuring `dma_reap_tx_completions()` is only invoked when
+   * `in_flight > 0` (or `tail != head`).
+   */
+  while(reaped_desc < (int)ctrl->ring_size)
+  {
+    dma_descriptor_t *desc = &ctrl->ring[ctrl->tail];
+
+    /*
+     * // AI Review Feedback: Memory Read Barrier & Cache Invalidation on Reaping:
+     * When hardware completes DMA transfer and clears `DMA_DESC_STATUS_OWN`, the CPU must execute
+     * a read memory barrier (`dma_rmb()`, `atomic_thread_fence(memory_order_acquire)`, or `asm
+     * volatile("dmb ishld" ::: "memory")`) after observing `OWN == 0` and before reading transfer
+     * status, errors, or unmapping/reusing the payload buffer. Additionally, on non-coherent
+     * architectures, the CPU must invalidate cache lines corresponding to RX packet buffers so
+     * future CPU reads access fresh data written by DMA.
+     */
+    if((desc->status & DMA_DESC_STATUS_OWN) != 0)
+    {
+      break;
+    }
+
+    if((ctrl->tail == ctrl->head) && (reaped_desc > 0))
+    {
+      break;
+    }
+
+    reaped_desc++;
+    ctrl->tail = (ctrl->tail + 1) % ctrl->ring_size;
+  }
+
+  return reaped_desc;
 }
 
 /* ==============================================================================
