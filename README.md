@@ -42,7 +42,7 @@ Every module subfolder contains its own standalone [`Makefile`](./Makefile) and 
 | **BLE Tracker Firmware** | Unaligned bit unpacking, lock-free ISR queue, debouncer | `make -C embedded-c/ble_tracker test` | `make -C embedded-c/ble_tracker run FILE=ble_payload_parser` | [`embedded-c/ble_tracker/README.md`](./embedded-c/ble_tracker/README.md) |
 | **POSIX Concurrency** | Mutexes, deadlocks, barriers, producer-consumer queues | `make -C embedded-c/concurrency test` | `make -C embedded-c/concurrency run FILE=mutex_shared_counter` | [`embedded-c/concurrency/README.md`](./embedded-c/concurrency/README.md) |
 | **Condition Variables** | Counting semaphores, multi-stage pipelines, traffic control | `make -C embedded-c/concurrency/condition_variables test` | `make -C embedded-c/concurrency/condition_variables run FILE=bounded_critical_section` | [`embedded-c/concurrency/condition_variables/README.md`](./embedded-c/concurrency/condition_variables/README.md) |
-| **Device Drivers & MMIO** | MMIO UART registers, PCIe BAR probe, coherent DMA descriptor ring | `make -C embedded-c/device_drivers test` | `make -C embedded-c/device_drivers run FILE=mmio_uart_driver` | [`embedded-c/device_drivers/README.md`](./embedded-c/device_drivers/README.md) |
+| **Device Drivers & MMIO** | MMIO UART registers, PCIe BAR probe, coherent DMA descriptor ring, I2C/SPI/I2S drivers | `make -C embedded-c/device_drivers test` | `make -C embedded-c/device_drivers run FILE=mmio_uart_driver` | [`embedded-c/device_drivers/README.md`](./embedded-c/device_drivers/README.md) |
 | **Parsers & Drivers** | TLV stream decoder, serializer, camera ISP bitfields | `make -C embedded-c/parsers_drivers test` | `make -C embedded-c/parsers_drivers run FILE=tlv_parser` | [`embedded-c/parsers_drivers/README.md`](./embedded-c/parsers_drivers/README.md) |
 | **Pointers & Algorithms** | Double-pointers, singly linked list, in-place string strip | `make -C embedded-c/pointers_algorithms test` | `make -C embedded-c/pointers_algorithms run FILE=singly_linked_list` | [`embedded-c/pointers_algorithms/README.md`](./embedded-c/pointers_algorithms/README.md) |
 | **Ring Buffers & DSP** | Power-of-two circular queue, moving average filter | `make -C embedded-c/ring_buffers test` | `make -C embedded-c/ring_buffers run FILE=power_of_two_ring_buffer` | [`embedded-c/ring_buffers/README.md`](./embedded-c/ring_buffers/README.md) |
@@ -61,7 +61,7 @@ sourcecode/
 │   ├── ble_tracker/           # BLE packet bit extraction, ISR ring buffer, debouncer, thread coordinator
 │   ├── concurrency/           # POSIX threads mutexes, barriers, bounded queues & condition variables
 │   │   └── condition_variables/ # Counting semaphore patterns & multi-stage service queues
-│   ├── device_drivers/        # Memory-Mapped I/O, PCIe configuration & coherent DMA descriptor rings
+│   ├── device_drivers/        # Memory-Mapped I/O, PCIe configuration, DMA rings, RTOS pipeline, I2C/SPI/I2S bus drivers
 │   ├── parsers_drivers/       # Stateful TLV packet parser, byte serialization & camera ISP pipeline
 │   ├── pointers_algorithms/   # Double pointers, dynamic singly linked list & string compaction
 │   ├── ring_buffers/          # Power-of-two circular buffers & sliding-window average filters

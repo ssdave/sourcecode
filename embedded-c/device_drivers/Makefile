@@ -4,6 +4,8 @@ TARGETS = mmio_uart_driver \
           pcie_config_driver \
           dma_ring_buffer_driver \
           i2c_bitbang_driver \
+          spi_bitbang_driver \
+          i2s_bitbang_driver \
           rtos_sensor_pipeline
 
 .PHONY: all test clean run

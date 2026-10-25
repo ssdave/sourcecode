@@ -10,6 +10,8 @@ Hardware-level peripheral controllers, bus configuration protocols, and direct m
 | `pcie_config_driver.c` | PCIe Bus Architecture | PCIe Type 0 Configuration Space probe and Base Address Register (BAR) sizing engine. Implements the standard `0xFFFFFFFF` write-and-read aperture sizing probe, distinguishes 32-bit from 64-bit BARs, and programs memory base addresses. |
 | `dma_ring_buffer_driver.c` | Direct Memory Access | Coherent DMA circular descriptor ring driver. Implements host-to-device ownership bit handoffs (`OWN`), hardware doorbell notification registers, memory fence barrier ordering, and descriptor completion reaping. |
 | `i2c_bitbang_driver.c` | Bus Protocols & Open-Drain GPIO | Open-drain GPIO bit-banged I2C controller and peripheral driver. Implements START/STOP framing conditions, 8-bit MSB-first byte serialization, 9th clock ACK/NACK protocol arbitration, and multi-byte register read/write transactions against a mock sensor. |
+| `spi_bitbang_driver.c` | Full-Duplex Synchronous Serial | 4-wire full-duplex bit-banged SPI bus controller. Implements all four SPI modes (Mode 0, 1, 2, 3: CPOL and CPHA matrix), active-low chip-select framing, simultaneous 8-bit full-duplex byte and buffer streaming, JEDEC identification queries, and memory array read/write transactions against a mock SPI Flash peripheral. |
+| `i2s_bitbang_driver.c` | Digital Audio Serial Bus | 3-wire digital audio serial interface controller adhering to the Philips I2S specification (BCLK, WS/LRCK, SD). Implements the iconic 1-BCLK delay following WS transitions, 16-bit two's complement stereo PCM audio serialization (Left channel WS=0, Right channel WS=1), multi-frame streaming, and master-mode ADC sample capture against a mock digital audio codec. |
 | `rtos_sensor_pipeline.c` | RTOS & Interrupt Processing | Top-Half (ISR) vs. Bottom-Half (RTOS Task) deferred sensor processing pipeline. Implements hardware MMIO sensor registers (`STATUS`, `DATA`, `CR`), a lock-free Single-Producer Single-Consumer (SPSC) circular queue, non-blocking interrupt handling with drop counters, RTOS counting semaphore synchronization, and a sliding-window moving-average filter. |
 
 ## How to Build & Run
@@ -29,14 +31,16 @@ make run FILE=mmio_uart_driver              # Build and run specific target
 make run FILE=pcie_config_driver
 make run FILE=dma_ring_buffer_driver
 make run FILE=i2c_bitbang_driver
+make run FILE=spi_bitbang_driver
+make run FILE=i2s_bitbang_driver
 make run FILE=rtos_sensor_pipeline
 make clean                                  # Clean artifacts
 ```
 
 ### Compiling a single file directly
 ```bash
-clang -Wall -Wextra -g -pthread rtos_sensor_pipeline.c -o rtos_sensor_pipeline
-./rtos_sensor_pipeline
+clang -Wall -Wextra -g -pthread spi_bitbang_driver.c -o spi_bitbang_driver
+./spi_bitbang_driver
 ```
 
 ## Academic Attribution & Technical References
@@ -47,4 +51,6 @@ The specifications and hardware models implemented in this module are derived fr
 - **Real-Time Operating Systems Architecture**, FreeRTOS & POSIX-RTOS models (Deferred interrupt processing, `FromISR` synchronization semantics, and SPSC queues).
 - **PCI Local Bus & PCI Express Architecture Specifications**, PCI-SIG (Type 0 Configuration Space & BAR Sizing).
 - **I2C Bus Specification and User Manual (UM10204)**, NXP Semiconductors / Philips (Physical layer, open-drain framing, ACK/NACK arbitration).
+- **Motorola SPI Block Guide (V04.01)** & Serial Peripheral Interface Standards (Clock polarity CPOL, clock phase CPHA, full-duplex synchronous serialization).
+- **Philips Semiconductors I2S Bus Specification (Feb 1986)**, Philips / NXP (3-wire digital audio serial interface, 1-BCLK delay, Word Select left/right channel framing).
 - **Linux Kernel Documentation**, Device Drivers & Memory Barriers (`Documentation/networking/device_drivers`, `Documentation/memory-barriers.txt`).

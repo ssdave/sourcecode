@@ -56,6 +56,8 @@ embedded-c/device_drivers/mmio_uart_driver
 embedded-c/device_drivers/pcie_config_driver
 embedded-c/device_drivers/dma_ring_buffer_driver
 embedded-c/device_drivers/i2c_bitbang_driver
+embedded-c/device_drivers/spi_bitbang_driver
+embedded-c/device_drivers/i2s_bitbang_driver
 embedded-c/device_drivers/rtos_sensor_pipeline
 
 # Legacy names (for backward-compatibility with clean targets)
