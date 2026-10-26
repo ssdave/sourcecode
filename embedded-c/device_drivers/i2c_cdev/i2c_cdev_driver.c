@@ -28,10 +28,22 @@
  */
 int i2c_cdev_open(struct inode *inode, struct file *filp)
 {
-  (void)inode;
-  (void)filp;
-  /* TODO: Author Implementation */
-  return -1;
+  if((inode == NULL) || (filp == NULL))
+  {
+    return -EINVAL;
+  }
+
+  i2c_cdev_session_t *session = (i2c_cdev_session_t *)malloc(sizeof(i2c_cdev_session_t));
+  if(session == NULL)
+  {
+    return -ENOMEM;
+  }
+  memset(session, 0, sizeof(*session));
+  session->slave_set = false;
+  session->slave_addr = 0;
+
+  filp->private_data = session;
+  return 0;
 }
 
 /**
@@ -47,9 +59,12 @@ int i2c_cdev_open(struct inode *inode, struct file *filp)
 int i2c_cdev_release(struct inode *inode, struct file *filp)
 {
   (void)inode;
-  (void)filp;
-  /* TODO: Author Implementation */
-  return -1;
+  if(filp && filp->private_data)
+  {
+    free(filp->private_data);
+    filp->private_data = NULL;
+  }
+  return 0;
 }
 
 /**
@@ -70,11 +85,60 @@ int i2c_cdev_release(struct inode *inode, struct file *filp)
  */
 long i2c_cdev_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
 {
-  (void)filp;
-  (void)cmd;
-  (void)arg;
-  /* TODO: Author Implementation */
-  return -1;
+  if(filp == NULL || filp->private_data == NULL || filp->f_inode == NULL)
+  {
+    return -EBADF;
+  }
+
+  i2c_cdev_session_t *session = (i2c_cdev_session_t *)filp->private_data;
+  i2c_cdev_device_t *dev = (i2c_cdev_device_t *)filp->f_inode->i_cdev->driver_data;
+  if(dev == NULL)
+  {
+    return -ENODEV;
+  }
+
+  switch(cmd)
+  {
+  case I2C_SLAVE:
+  {
+    if(arg > 0x7F)
+    {
+      return -EINVAL;
+    }
+    session->slave_addr = (uint8_t)arg;
+    session->slave_set = true;
+    return 0;
+  }
+
+  case I2C_GET_STATS:
+  {
+    if(arg == 0)
+    {
+      return -EFAULT;
+    }
+    i2c_bus_stats_t stats_copy;
+    pthread_mutex_lock(&dev->bus_lock);
+    stats_copy = dev->stats;
+    pthread_mutex_unlock(&dev->bus_lock);
+
+    if(copy_to_user((void *)arg, &stats_copy, sizeof(stats_copy)) != 0)
+    {
+      return -EFAULT;
+    }
+    return 0;
+  }
+
+  case I2C_RESET_BUS:
+  {
+    pthread_mutex_lock(&dev->bus_lock);
+    i2c_bus_reset(dev);
+    pthread_mutex_unlock(&dev->bus_lock);
+    return 0;
+  }
+
+  default:
+    return -ENOTTY;
+  }
 }
 
 /**
@@ -93,12 +157,61 @@ long i2c_cdev_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
  */
 ssize_t i2c_cdev_read(struct file *filp, char *buf, size_t count, loff_t *f_pos)
 {
-  (void)filp;
-  (void)buf;
-  (void)count;
-  (void)f_pos;
-  /* TODO: Author Implementation */
-  return -1;
+  if(filp == NULL || filp->private_data == NULL || f_pos == NULL)
+  {
+    return -EINVAL;
+  }
+
+  if(count == 0)
+  {
+    return 0;
+  }
+
+  if(count > MAX_TRANSFER_LEN)
+  {
+    return -EINVAL;
+  }
+
+  if(!is_valid_user_ptr(buf, count))
+  {
+    return -EFAULT;
+  }
+
+  i2c_cdev_session_t *session = (i2c_cdev_session_t *)filp->private_data;
+  if(!session->slave_set)
+  {
+    return -EINVAL;
+  }
+
+  i2c_cdev_device_t *dev = (i2c_cdev_device_t *)filp->f_inode->i_cdev->driver_data;
+  if(dev == NULL)
+  {
+    return -ENODEV;
+  }
+
+  uint8_t kbuf[MAX_TRANSFER_LEN];
+  pthread_mutex_lock(&dev->bus_lock);
+  int ret = i2c_hardware_transfer(dev, session->slave_addr, kbuf, count, true);
+  if(ret == 0)
+  {
+    dev->stats.total_transfers++;
+    dev->stats.bytes_read += (uint32_t)count;
+    session->session_reads += (uint32_t)count;
+    *f_pos += (loff_t)count;
+  }
+  pthread_mutex_unlock(&dev->bus_lock);
+
+  if(ret != 0)
+  {
+    return -EIO;
+  }
+
+  if(copy_to_user(buf, kbuf, count) != 0)
+  {
+    return -EFAULT;
+  }
+
+  return (ssize_t)count;
 }
 
 /**
@@ -117,12 +230,56 @@ ssize_t i2c_cdev_read(struct file *filp, char *buf, size_t count, loff_t *f_pos)
  */
 ssize_t i2c_cdev_write(struct file *filp, const char *buf, size_t count, loff_t *f_pos)
 {
-  (void)filp;
-  (void)buf;
-  (void)count;
-  (void)f_pos;
-  /* TODO: Author Implementation */
-  return -1;
+  if(filp == NULL || filp->private_data == NULL || f_pos == NULL)
+  {
+    return -EINVAL;
+  }
+
+  if(count == 0)
+  {
+    return 0;
+  }
+
+  if(count > MAX_TRANSFER_LEN)
+  {
+    return -EINVAL;
+  }
+
+  if(!is_valid_user_ptr(buf, count))
+  {
+    return -EFAULT;
+  }
+
+  i2c_cdev_session_t *session = (i2c_cdev_session_t *)filp->private_data;
+  if(!session->slave_set)
+  {
+    return -EINVAL;
+  }
+
+  uint8_t kbuf[MAX_TRANSFER_LEN];
+  if(copy_from_user(kbuf, buf, count) != 0)
+  {
+    return -EFAULT;
+  }
+
+  i2c_cdev_device_t *dev = (i2c_cdev_device_t *)filp->f_inode->i_cdev->driver_data;
+  if(dev == NULL)
+  {
+    return -ENODEV;
+  }
+
+  pthread_mutex_lock(&dev->bus_lock);
+  int ret = i2c_hardware_transfer(dev, session->slave_addr, kbuf, count, false);
+  if(ret == 0)
+  {
+    dev->stats.total_transfers++;
+    dev->stats.bytes_written += (uint32_t)count;
+    session->session_writes += (uint32_t)count;
+    *f_pos += (loff_t)count;
+  }
+  pthread_mutex_unlock(&dev->bus_lock);
+
+  return (ret == 0) ? (ssize_t)count : -EIO;
 }
 
 /* ==============================================================================

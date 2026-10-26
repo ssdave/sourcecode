@@ -162,11 +162,18 @@ void i2c_subsystem_cleanup(void)
  */
 int copy_to_user(void *user_dest, const void *kernel_src, size_t n)
 {
-  (void)user_dest;
-  (void)kernel_src;
-  (void)n;
-  /* TODO: Author Implementation */
-  return -EFAULT;
+  if((user_dest == NULL) || (kernel_src == NULL) || (n == 0))
+  {
+    return -EFAULT;
+  }
+
+  if(!is_valid_user_ptr(user_dest, n))
+  {
+    return -EFAULT;
+  }
+
+  memcpy(user_dest, kernel_src, n);
+  return 0;
 }
 
 /**
@@ -183,11 +190,18 @@ int copy_to_user(void *user_dest, const void *kernel_src, size_t n)
  */
 int copy_from_user(void *kernel_dest, const void *user_src, size_t n)
 {
-  (void)kernel_dest;
-  (void)user_src;
-  (void)n;
-  /* TODO: Author Implementation */
-  return -EFAULT;
+  if((kernel_dest == NULL) || (user_src == NULL) || (n == 0))
+  {
+    return -EFAULT;
+  }
+
+  if(!is_valid_user_ptr(user_src, n))
+  {
+    return -EFAULT;
+  }
+
+  memcpy(kernel_dest, user_src, n);
+  return 0;
 }
 
 /* ==============================================================================
@@ -208,10 +222,59 @@ int copy_from_user(void *kernel_dest, const void *user_src, size_t n)
  */
 int sys_cdev_open(const char *pathname, int flags)
 {
-  (void)pathname;
-  (void)flags;
   /* TODO: Author Implementation */
-  return -1;
+  if(pathname == NULL)
+  {
+    return -1;
+  }
+
+  struct inode *node = vfs_lookup(pathname);
+  if(node == NULL)
+  {
+    return -1;
+  }
+
+  struct file *f_i2c = (struct file *)malloc(sizeof(struct file));
+  if(f_i2c == NULL)
+  {
+    return -1;
+  }
+
+  f_i2c->f_flags = flags;
+  f_i2c->f_inode = node;
+  f_i2c->f_op = f_i2c->f_inode->i_cdev->ops;
+
+  int fd;
+  int ret = pthread_mutex_lock(&g_fd_mutex);
+  if(ret != 0)
+  {
+    return -1;
+  }
+
+  for(int i = 0; i < MAX_FDS; i++)
+  {
+    if(g_fd_table[i] == NULL)
+    {
+      fd = i;
+      g_fd_table[i] = f_i2c;
+      f_i2c->f_pos = i;
+      break;
+    }
+  }
+
+  ret = pthread_mutex_unlock(&g_fd_mutex);
+  if(ret != 0)
+  {
+    return -1;
+  }
+
+  ret = f_i2c->f_op->open(node, f_i2c);
+  if(ret != 0)
+  {
+    return -1;
+  }
+
+  return fd;
 }
 
 /**
@@ -225,9 +288,26 @@ int sys_cdev_open(const char *pathname, int flags)
  */
 int sys_cdev_close(int fd)
 {
-  (void)fd;
   /* TODO: Author Implementation */
-  return -1;
+  if((fd < 0) || (fd >= MAX_FDS))
+  {
+    errno = EBADF;
+    return -1;
+  }
+
+  if(g_fd_table[fd])
+  {
+    g_fd_table[fd]->f_op->release(g_fd_table[fd]->f_inode, g_fd_table[fd]);
+    free(g_fd_table[fd]);
+    g_fd_table[fd] = NULL;
+  }
+  else
+  {
+    errno = EBADF;
+    return -1;
+  }
+
+  return 0;
 }
 
 /**
@@ -240,11 +320,27 @@ int sys_cdev_close(int fd)
  */
 ssize_t sys_cdev_read(int fd, void *buf, size_t count)
 {
-  (void)fd;
-  (void)buf;
-  (void)count;
-  /* TODO: Author Implementation */
-  return -1;
+  if((fd < 0) || (fd >= MAX_FDS))
+  {
+    errno = EBADF;
+    return -1;
+  }
+
+  if(g_fd_table[fd] == NULL || g_fd_table[fd]->f_op == NULL || g_fd_table[fd]->f_op->read == NULL)
+  {
+    errno = EBADF;
+    return -1;
+  }
+
+  struct file *filp = g_fd_table[fd];
+  ssize_t ret = filp->f_op->read(filp, (char *)buf, count, &filp->f_pos);
+  if(ret < 0)
+  {
+    errno = (int)(-ret);
+    return -1;
+  }
+
+  return ret;
 }
 
 /**
@@ -257,11 +353,27 @@ ssize_t sys_cdev_read(int fd, void *buf, size_t count)
  */
 ssize_t sys_cdev_write(int fd, const void *buf, size_t count)
 {
-  (void)fd;
-  (void)buf;
-  (void)count;
-  /* TODO: Author Implementation */
-  return -1;
+  if((fd < 0) || (fd >= MAX_FDS))
+  {
+    errno = EBADF;
+    return -1;
+  }
+
+  if(g_fd_table[fd] == NULL || g_fd_table[fd]->f_op == NULL || g_fd_table[fd]->f_op->write == NULL)
+  {
+    errno = EBADF;
+    return -1;
+  }
+
+  struct file *filp = g_fd_table[fd];
+  ssize_t ret = filp->f_op->write(filp, (const char *)buf, count, &filp->f_pos);
+  if(ret < 0)
+  {
+    errno = (int)(-ret);
+    return -1;
+  }
+
+  return ret;
 }
 
 /**
@@ -274,9 +386,26 @@ ssize_t sys_cdev_write(int fd, const void *buf, size_t count)
  */
 int sys_cdev_ioctl(int fd, unsigned long cmd, unsigned long arg)
 {
-  (void)fd;
-  (void)cmd;
-  (void)arg;
-  /* TODO: Author Implementation */
-  return -1;
+  if((fd < 0) || (fd >= MAX_FDS))
+  {
+    errno = EBADF;
+    return -1;
+  }
+
+  if(g_fd_table[fd] == NULL || g_fd_table[fd]->f_op == NULL ||
+     g_fd_table[fd]->f_op->unlocked_ioctl == NULL)
+  {
+    errno = EBADF;
+    return -1;
+  }
+
+  struct file *filp = g_fd_table[fd];
+  long ret = filp->f_op->unlocked_ioctl(filp, (unsigned int)cmd, arg);
+  if(ret < 0)
+  {
+    errno = (int)(-ret);
+    return -1;
+  }
+
+  return 0;
 }
